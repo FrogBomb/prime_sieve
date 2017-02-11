@@ -1,0 +1,6 @@
+[package]
+name = "prime_sieve"
+version = "0.1.0"
+authors = ["FrogBomb <TLBlanchet@gmail.com>"]
+
+[dependencies]
