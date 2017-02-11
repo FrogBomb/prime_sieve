@@ -1,4 +1,5 @@
-# prime_sieve
+
+# prime_sieve [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
 Tools for generating filters and collections with primes. 
 
 Rust implementation of the Sieve of Atkin. 
