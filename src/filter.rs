@@ -1,3 +1,5 @@
+extern crate num_cpus;
+
 use std;
 use std::thread;
 use std::sync::mpsc;
@@ -67,6 +69,7 @@ fn case_3(y_sq: usize, to_next_y_sq: usize, iter_size: usize)
 
 fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Sieve of Atkin
+    let num_cpus = num_cpus::get();
     assert!(min<max);
     let mut prime_filter = vec![false; max-min];
     if (min <= 2) & (max > 2) {prime_filter[2-min] = true;}
@@ -107,6 +110,14 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
+        while spawned_threads>=num_cpus{
+            for mes in rx.try_iter(){
+                spawned_threads -= 1;
+                for flip_i in mes{
+                    prime_filter[flip_i - min] ^= true;
+                }
+            }
+        };
     };
 
     while spawned_threads!=0{
