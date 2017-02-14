@@ -11,11 +11,9 @@ pub fn prime_filter(iter_size: usize) -> Vec<bool>{
 }
 
 fn case_1(y_sq: usize, iter_size: usize)
-    -> (usize, Vec<bool>) {
+    -> Vec<usize> {
     //n_1 = 4x^2 + y^2 === 1 (mod 4)
-    let (mut n_1, mut to_next_n_1) = (y_sq, 4);
-    let offset = n_1;
-    let mut temp_filter = vec![false; iter_size-offset];
+    let (mut n_1, mut to_next_n_1) = (y_sq, 4);    let mut ret_stack: Vec<usize> = Vec::new();
     loop{
         n_1 += to_next_n_1;
         to_next_n_1 += 8;
@@ -26,17 +24,15 @@ fn case_1(y_sq: usize, iter_size: usize)
         };
 
         // println!("1: {}", n_1);
-        temp_filter[n_1-offset] ^= true;
+        ret_stack.push(n_1);
     };
-    (offset, temp_filter)
+    ret_stack
 }
 fn case_2(y_sq: usize, iter_size: usize)
-    -> (usize, Vec<bool>) {
+    -> Vec<usize> {
     //n_2 = 3x^2 + y^2 === 1 (mod 6)
     let (mut n_2, mut to_next_n_2) = (y_sq, 3);
-    let offset = n_2.clone();
-
-    let mut temp_filter = vec![false; iter_size-offset];
+    let mut ret_stack: Vec<usize> = Vec::new();
     loop {
         n_2 += to_next_n_2;
         to_next_n_2 += 6;
@@ -46,16 +42,15 @@ fn case_2(y_sq: usize, iter_size: usize)
             _ => continue,
         };
         // println!("2: {}", n_2);
-        temp_filter[n_2 - offset] ^= true;
+        ret_stack.push(n_2);
     };
-    (offset, temp_filter)
+    ret_stack
 }
 fn case_3(y_sq: usize, to_next_y_sq: usize, iter_size: usize)
-    -> (usize, Vec<bool>) {
+    -> Vec<usize> {
     //n_3 = 3x^2 - y^2 === 11 (mod 12)
     let (mut n_3, mut to_next_n_3) = (2*y_sq, 3*to_next_y_sq);
-    let offset = n_3;
-    let mut temp_filter = vec![false; iter_size - offset];
+    let mut ret_stack: Vec<usize> = Vec::new();
     loop {
         n_3 += to_next_n_3;
         to_next_n_3 += 6;
@@ -65,9 +60,9 @@ fn case_3(y_sq: usize, to_next_y_sq: usize, iter_size: usize)
             _ => continue,
         };
         // println!("3: {}", n_3);
-        temp_filter[n_3 - offset] ^= true;
+        ret_stack.push(n_3);
     };
-    (offset, temp_filter)
+    ret_stack
 }
 
 fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
@@ -110,13 +105,8 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
         if spawned_threads>0{
             for mes in rx.try_iter(){
                 spawned_threads -= 1;
-                let (offset, temp_filter) = mes;
-                for flip_i in temp_filter.into_iter().enumerate()
-                                        .filter_map(|x| match x {
-                                            (i, true) => Some(i),
-                                            _ => None,
-                                        }){
-                    prime_filter[offset + flip_i - min] ^= true;
+                for flip_i in mes{
+                    prime_filter[flip_i - min] ^= true;
                 }
             }
         };
@@ -130,13 +120,8 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     while spawned_threads>0{
         for mes in rx.try_iter(){
             spawned_threads -= 1;
-            let (offset, temp_filter) = mes;
-            for flip_i in temp_filter.into_iter().enumerate()
-                                    .filter_map(|x| match x {
-                                        (i, true) => Some(i),
-                                        _ => None,
-                                    }){
-                prime_filter[offset + flip_i - min] ^= true;
+            for flip_i in mes{
+                prime_filter[flip_i - min] ^= true;
             }
         }
     };
