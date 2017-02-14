@@ -119,13 +119,14 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     prime_filter[offset + flip_i - min] ^= true;
                 }
             }
-        }
+        };
         while{ //Do-while
             y_sq += to_next_y_sq;
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
     };
+
     while spawned_threads>0{
         for mes in rx.try_iter(){
             spawned_threads -= 1;
@@ -138,7 +139,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 prime_filter[offset + flip_i - min] ^= true;
             }
         }
-    }
+    };
     //Eliminate non-squarefree numbers
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
@@ -154,15 +155,11 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             } {};
         };
         while{ //Do-while
-            non_sq_free += n_sq + n_sq;
-            (non_sq_free%3==0) | (non_sq_free%5==0)
+            n_sq += next_n_sq;
+            next_n_sq += 8;
+            (n_sq%3==0) | (n_sq%5 == 0)
         } {};
-    };
-    while{ //Do-while
-        n_sq += next_n_sq;
-        next_n_sq += 8;
-        (n_sq%3==0) | (n_sq%5 == 0)
-    } {};
+    }
     prime_filter
 }
 #[cfg(test)]
