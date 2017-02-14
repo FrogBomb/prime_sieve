@@ -75,7 +75,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     while n_sq < max {
         let mut non_sq_free = n_sq;
         while non_sq_free < max {
-            if(non_sq_free >= min){
+            if non_sq_free >= min {
                 prime_filter[non_sq_free - min] = false;
             }
             while{ //Do-while
