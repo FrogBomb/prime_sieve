@@ -2,6 +2,14 @@ use std;
 use std::thread;
 use std::sync::mpsc;
 
+pub fn prime_filter(iter_size: usize) -> Vec<bool>{
+    if iter_size<100{
+        slow_prime_filter(iter_size)
+    }else{
+        prime_filter_section(0, iter_size)
+    }
+}
+
 fn case_1(y_sq: usize, iter_size: usize)
     -> (usize, Vec<bool>) {
     //n_1 = 4x^2 + y^2 === 1 (mod 4)
@@ -62,64 +70,43 @@ fn case_3(y_sq: usize, to_next_y_sq: usize, iter_size: usize)
     (offset, temp_filter)
 }
 
-pub fn prime_filter(iter_size: usize) -> Vec<bool>{
+fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Sieve of Atkin
-    if iter_size < 100 {
-        slow_prime_filter(iter_size)
-    }else{
-        let mut prime_filter = vec![false; iter_size];
-        prime_filter[2] = true;
-        prime_filter[3] = true;
-        prime_filter[5] = true;
-        let mut y_sq = 1;
-        let mut to_next_y_sq = 3;
+    assert!(min<max);
+    let mut prime_filter = vec![false; max-min];
+    if (min <= 2) & (max > 2) {prime_filter[2-min] = true;}
+    if (min <= 3) & (max > 3) {prime_filter[3-min] = true;}
+    if (min <= 5) & (max > 5) {prime_filter[5-min] = true;}
 
-        let mut spawned_threads = 0;
-
-        let (tx, rx) = mpsc::channel();
-        while y_sq<iter_size {
-            if y_sq%2 == 1 {
-                spawned_threads += 1;
-                let (y_sq, tx) = (y_sq, tx.clone());
-                thread::spawn(move || {
-                    tx.send(case_1(y_sq, iter_size)).unwrap();
-                });
-            };
-            if y_sq%3 == 1 {
-
-                spawned_threads += 1;
-                let (y_sq, to_next_y_sq, tx1) = (y_sq, to_next_y_sq, tx.clone());
-                thread::spawn(move || {
-                    tx1.send(case_2(y_sq, iter_size)).unwrap();
-                });
-                if y_sq*2<iter_size{
-                    spawned_threads += 1;
-                    let tx2 = tx.clone();
-                    thread::spawn(move || {
-                        tx2.send(case_3(y_sq, to_next_y_sq, iter_size)).unwrap();
-                    });
-                }
-            };
-            if spawned_threads>0{
-                for mes in rx.try_iter(){
-                    spawned_threads -= 1;
-                    let (offset, temp_filter) = mes;
-                    for flip_i in temp_filter.into_iter().enumerate()
-                                            .filter_map(|x| match x {
-                                                (i, true) => Some(i),
-                                                _ => None,
-                                            }){
-                        prime_filter[offset + flip_i] ^= true;
-                    }
-                }
-            }
-            while{ //Do-while
-                y_sq += to_next_y_sq;
-                to_next_y_sq += 2;
-                y_sq%6 == 0
-            } {};
+    let (mut y_sq, mut to_next_y_sq) = match min {
+        0|1 => (1, 3),
+        _ => (min*min, 2*min + 1),
+    };
+    let (tx, rx) = mpsc::channel();
+    while y_sq<max {
+        if y_sq%2 == 1 {
+            spawned_threads += 1;
+            let (y_sq, tx) = (y_sq, tx.clone());
+            thread::spawn(move || {
+                tx.send(case_1(y_sq, max)).unwrap();
+            });
         };
-        while spawned_threads>0{
+        if y_sq%3 == 1 {
+
+            spawned_threads += 1;
+            let (y_sq, to_next_y_sq, tx1) = (y_sq, to_next_y_sq, tx.clone());
+            thread::spawn(move || {
+                tx1.send(case_2(y_sq, max)).unwrap();
+            });
+            if y_sq*2<iter_size{
+                spawned_threads += 1;
+                let tx2 = tx.clone();
+                thread::spawn(move || {
+                    tx2.send(case_3(y_sq, to_next_y_sq, max)).unwrap();
+                });
+            }
+        };
+        if spawned_threads>0{
             for mes in rx.try_iter(){
                 spawned_threads -= 1;
                 let (offset, temp_filter) = mes;
@@ -128,30 +115,52 @@ pub fn prime_filter(iter_size: usize) -> Vec<bool>{
                                             (i, true) => Some(i),
                                             _ => None,
                                         }){
-                    prime_filter[offset + flip_i] ^= true;
+                    prime_filter[offset + flip_i - min] ^= true;
                 }
             }
         }
-        //Eliminate non-squarefree numbers
-        let mut n_sq = 49; // 7^2
-        let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
-        while n_sq < iter_size {
-            let mut non_sq_free = n_sq;
-            while non_sq_free < iter_size {
-                prime_filter[non_sq_free] = false;
-                while{ //Do-while
-                    non_sq_free += n_sq + n_sq;
-                    (non_sq_free%3==0) | (non_sq_free%5==0)
-                } {};
-            };
-            while{ //Do-while
-                n_sq += next_n_sq;
-                next_n_sq += 8;
-                (n_sq%3==0) | (n_sq%5 == 0)
-            } {};
+        while{ //Do-while
+            y_sq += to_next_y_sq;
+            to_next_y_sq += 2;
+            y_sq%6 == 0
+        } {};
+    };
+    while spawned_threads>0{
+        for mes in rx.try_iter(){
+            spawned_threads -= 1;
+            let (offset, temp_filter) = mes;
+            for flip_i in temp_filter.into_iter().enumerate()
+                                    .filter_map(|x| match x {
+                                        (i, true) => Some(i),
+                                        _ => None,
+                                    }){
+                prime_filter[offset + flip_i - min] ^= true;
+            }
         }
-        prime_filter
     }
+    //Eliminate non-squarefree numbers
+    let mut n_sq = 49; // 7^2
+    let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
+    while n_sq < iter_size {
+        let mut non_sq_free = n_sq;
+        while non_sq_free < iter_size {
+            prime_filter[non_sq_free] = false;
+            while{ //Do-while
+                non_sq_free += n_sq + n_sq;
+                (non_sq_free%3==0) | (non_sq_free%5==0)
+            } {};
+        };
+        while{ //Do-while
+            non_sq_free += n_sq + n_sq;
+            (non_sq_free%3==0) | (non_sq_free%5==0)
+        } {};
+    };
+    while{ //Do-while
+        n_sq += next_n_sq;
+        next_n_sq += 8;
+        (n_sq%3==0) | (n_sq%5 == 0)
+    } {};
+    prime_filter
 }
 #[cfg(test)]
 pub fn old_prime_filter(iter_size: usize) -> std::vec::Vec<bool>{
