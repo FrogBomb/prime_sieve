@@ -34,4 +34,11 @@ mod tests {
             assert_eq!(test_primes[i], some_primes[i], "Mismatch")
         };
     }
+    #[test]
+    fn count_primes(){
+        let n = 1000000;
+        let primes = primes(n);
+        let total_primes = primes.len();
+        assert_eq!(total_primes, 78498);
+    }
 }
