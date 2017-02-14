@@ -102,7 +102,6 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 });
             }
         };
-    };
         while{ //Do-while
             y_sq += to_next_y_sq;
             to_next_y_sq += 2;
