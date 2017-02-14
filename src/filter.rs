@@ -110,7 +110,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
-        while spawned_threads>=num_cpus{
+        while (spawned_threads + 1)>=num_cpus{
             for mes in rx.try_iter(){
                 spawned_threads -= 1;
                 for flip_i in mes{
