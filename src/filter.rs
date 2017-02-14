@@ -112,8 +112,9 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
-        if spawned_threads >= num_cpus{
-            while spawned_threads > THREAD_THRESHOLD{
+        if spawned_threads >= THREAD_THRESHOLD{
+            // let prev_spawned_threads = spawned_threads;
+            while spawned_threads > num_cpus{
                 for mes in rx.try_iter(){
                     spawned_threads -= 1;
                     for flip_i in mes{
@@ -121,6 +122,8 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     }
                 }
             }
+            // let despawned_threads = prev_spawned_threads - spawned_threads;
+            // println!("despawned_threads: {}", despawned_threads);
         };
     };
 
