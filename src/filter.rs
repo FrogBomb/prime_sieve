@@ -99,7 +99,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             thread::spawn(move || {
                 tx1.send(case_2(y_sq, max)).unwrap();
             });
-            if y_sq*2<iter_size{
+            if y_sq*2<max{
                 spawned_threads += 1;
                 let tx2 = tx.clone();
                 thread::spawn(move || {
@@ -142,7 +142,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Eliminate non-squarefree numbers
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
-    while n_sq < iter_size {
+    while n_sq < max {
         let mut non_sq_free = n_sq;
         while non_sq_free < max {
             if non_sq_free >= min {
