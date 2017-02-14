@@ -82,6 +82,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
         0|1 => (1, 3),
         _ => (min*min, 2*min + 1),
     };
+    let mut spawned_threads = 0;
     let (tx, rx) = mpsc::channel();
     while y_sq<max {
         if y_sq%2 == 1 {
