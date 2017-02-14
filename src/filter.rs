@@ -143,8 +143,10 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
     while n_sq < iter_size {
         let mut non_sq_free = n_sq;
-        while non_sq_free < iter_size {
-            prime_filter[non_sq_free] = false;
+        while non_sq_free < max {
+            if(non_sq_free > min){
+                prime_filter[non_sq_free - min] = false;
+            }
             while{ //Do-while
                 non_sq_free += n_sq + n_sq;
                 (non_sq_free%3==0) | (non_sq_free%5==0)
