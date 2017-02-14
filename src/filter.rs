@@ -4,6 +4,8 @@ use std;
 use std::thread;
 use std::sync::mpsc;
 
+static THREAD_THRESHOLD: usize = 255;
+
 pub fn prime_filter(iter_size: usize) -> Vec<bool>{
     if iter_size<100{
         slow_prime_filter(iter_size)
@@ -110,11 +112,13 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
-        if spawned_threads>=num_cpus{
-            for mes in rx.try_iter(){
-                spawned_threads -= 1;
-                for flip_i in mes{
-                    prime_filter[flip_i - min] ^= true;
+        if spawned_threads >= num_cpus{
+            while spawned_threads > THREAD_THRESHOLD{
+                for mes in rx.try_iter(){
+                    spawned_threads -= 1;
+                    for flip_i in mes{
+                        prime_filter[flip_i - min] ^= true;
+                    }
                 }
             }
         };
