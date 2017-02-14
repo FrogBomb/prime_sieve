@@ -9,7 +9,7 @@ mod tests {
     };
     #[test]
     fn test_prime_filter(){
-        let n = 1234567;
+        let n = 12345;
         let new_pf = prime_filter(n);
         let old_pf = old_prime_filter(n);
         for i in 0..n{
