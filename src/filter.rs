@@ -4,7 +4,7 @@ use std;
 use std::thread;
 use std::sync::mpsc;
 
-static THREAD_THRESHOLD: usize = 255;
+static CORE_MUL_THRESHOLD: usize = 8;
 
 pub fn prime_filter(iter_size: usize) -> Vec<bool>{
     if iter_size<100{
@@ -72,6 +72,7 @@ fn case_3(y_sq: usize, to_next_y_sq: usize, iter_size: usize)
 fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Sieve of Atkin
     let num_cpus = num_cpus::get();
+    let thread_threshold = num_cpus*CORE_MUL_THRESHOLD;
     assert!(min<max);
     let mut prime_filter = vec![false; max-min];
     if (min <= 2) & (max > 2) {prime_filter[2-min] = true;}
@@ -112,7 +113,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
-        if spawned_threads >= THREAD_THRESHOLD{
+        if spawned_threads >= thread_threshold{
             // let prev_spawned_threads = spawned_threads;
             while spawned_threads > num_cpus{
                 for mes in rx.try_iter(){
