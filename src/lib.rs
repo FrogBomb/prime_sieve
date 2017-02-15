@@ -16,7 +16,10 @@ mod tests {
             assert_eq!(new_pf[i], old_pf[i], "Failed on number {}", i)
         }
     }
-    use collection::primes;
+    use collection::{
+        primes,
+        primes_section,
+    };
     #[test]
     fn test_prime_collection(){
         let some_primes = [ 2, 3, 5, 7, 11, 13,
@@ -40,5 +43,13 @@ mod tests {
         let primes = primes(n);
         let total_primes = primes.len();
         assert_eq!(total_primes, 78498);
+    }
+    #[test]
+    fn count_prime_section(){
+        let min = 1000000;
+        let max = 10000000;
+        let primes = primes_section(min, max);
+        let total_primes = primes.len();
+        assert_eq!(total_primes, 586081);
     }
 }
