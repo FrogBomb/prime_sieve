@@ -6,7 +6,7 @@ pub fn prime_filter(iter_size: usize) -> Vec<bool>{
         prime_filter_section(0, iter_size)
     }
 }
-fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
+pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Sieve of Atkin
     assert!(min<max);
     let mut prime_filter = vec![false; max-min];
@@ -14,10 +14,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     if (min <= 3) & (max > 3) {prime_filter[3-min] = true;}
     if (min <= 5) & (max > 5) {prime_filter[5-min] = true;}
 
-    let (mut y_sq, mut to_next_y_sq) = match min {
-        0|1 => (1, 3),
-        _ => (min*min, 2*min + 1),
-    };
+    let (mut y_sq, mut to_next_y_sq) = (1, 3);
     while y_sq<max {
         if y_sq%2 == 1 {
             //n_1 = 4x^2 + y^2 === 1 (mod 4)
@@ -27,6 +24,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 to_next_n_1 += 8;
                 match n_1%60{
                     _ if n_1 >= max => break,
+                    _ if n_1 < min => continue,
                     1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
                     _ => continue,
                 };
@@ -43,6 +41,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 to_next_n_2 += 6;
                 match n_2%60{
                     _ if n_2 >= max => break,
+                    _ if n_2 < min => continue,
                     7 | 19 | 31 | 43 => (),
                     _ => continue,
                 };
@@ -56,6 +55,7 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 to_next_n_3 += 6;
                 match n_3%60{
                     _ if n_3 >= max => break,
+                    _ if n_3 < min => continue,
                     11 | 23 | 47 | 59 => (),
                     _ => continue,
                 };
