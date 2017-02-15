@@ -4,7 +4,7 @@ use std;
 use std::thread;
 use std::sync::mpsc;
 
-static CORE_MUL_THRESHOLD: usize = 8;
+static CORE_MUL_THRESHOLD: usize = 16;
 
 pub fn prime_filter(iter_size: usize) -> Vec<bool>{
     if iter_size<100{
@@ -113,28 +113,29 @@ fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             to_next_y_sq += 2;
             y_sq%6 == 0
         } {};
-        if spawned_threads >= thread_threshold{
+        while spawned_threads >= thread_threshold{
             // let prev_spawned_threads = spawned_threads;
-            while spawned_threads > num_cpus{
-                for mes in rx.try_iter(){
-                    spawned_threads -= 1;
-                    for flip_i in mes{
-                        prime_filter[flip_i - min] ^= true;
-                    }
+            for mes in rx.try_iter(){
+                spawned_threads -= 1;
+                for flip_i in mes{
+                    prime_filter[flip_i - min] ^= true;
                 }
             }
             // let despawned_threads = prev_spawned_threads - spawned_threads;
             // println!("despawned_threads: {}", despawned_threads);
         };
     };
-
+    // println!("Threads after first loop: {}", spawned_threads);
     while spawned_threads!=0{
-        for mes in rx.try_iter(){
-            spawned_threads -= 1;
-            for flip_i in mes{
-                prime_filter[flip_i - min] ^= true;
-            }
-        }
+        match rx.recv(){
+            Ok(mes) => {
+                spawned_threads -= 1;
+                for flip_i in mes{
+                    prime_filter[flip_i - min] ^= true;
+                }
+            },
+            Err(e) => panic!(e.to_string()),
+        };
     };
     //Eliminate non-squarefree numbers
     let mut n_sq = 49; // 7^2
