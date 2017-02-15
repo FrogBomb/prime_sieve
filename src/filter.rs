@@ -23,8 +23,8 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 n_1 += to_next_n_1;
                 to_next_n_1 += 8;
                 match n_1%60{
-                    _ if n_1 >= max => break,
                     _ if n_1 < min => continue,
+                    _ if n_1 >= max => break,
                     1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
                     _ => continue,
                 };
@@ -40,8 +40,8 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 n_2 += to_next_n_2;
                 to_next_n_2 += 6;
                 match n_2%60{
-                    _ if n_2 >= max => break,
                     _ if n_2 < min => continue,
+                    _ if n_2 >= max => break,
                     7 | 19 | 31 | 43 => (),
                     _ => continue,
                 };
@@ -54,8 +54,8 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 n_3 += to_next_n_3;
                 to_next_n_3 += 6;
                 match n_3%60{
-                    _ if n_3 >= max => break,
                     _ if n_3 < min => continue,
+                    _ if n_3 >= max => break,
                     11 | 23 | 47 | 59 => (),
                     _ => continue,
                 };
