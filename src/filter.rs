@@ -10,9 +10,11 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Sieve of Atkin
     assert!(min<max);
     let mut prime_filter = vec![false; max-min];
-    if (min <= 2) & (max > 2) {prime_filter[2-min] = true;}
-    if (min <= 3) & (max > 3) {prime_filter[3-min] = true;}
-    if (min <= 5) & (max > 5) {prime_filter[5-min] = true;}
+    if (min <= 2) & (max > 2)   {prime_filter[2-min] = true;}
+    if (min <= 3) & (max > 3)   {prime_filter[3-min] = true;}
+    if (min <= 5) & (max > 5)   {prime_filter[5-min] = true;}
+    if (min <= 7) & (max > 7)   {prime_filter[7-min] = true;}
+    if (min <= 11) & (max > 11) {prime_filter[11-min] = true;}
 
     let (mut y_sq, mut to_next_y_sq) = (1, 3);
     while y_sq<max {
@@ -28,6 +30,11 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
                     _ => continue,
                 };
+                match (n_1%7, n_1%11){
+                    (0, _) => continue,
+                    (_, 0) => continue,
+                    _ => (),
+                }
 
                 // println!("1: {}", n_1);
                 prime_filter[n_1 - min] ^= true;
@@ -45,6 +52,11 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     7 | 19 | 31 | 43 => (),
                     _ => continue,
                 };
+                match (n_2%7, n_2%11){
+                    (0, _) => continue,
+                    (_, 0) => continue,
+                    _ => (),
+                }
                 // println!("2: {}", n_2);
                 prime_filter[n_2 - min] ^= true;
             };
@@ -59,6 +71,11 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     11 | 23 | 47 | 59 => (),
                     _ => continue,
                 };
+                match (n_3%7, n_3%11){
+                    (0, _) => continue,
+                    (_, 0) => continue,
+                    _ => (),
+                }
                 // println!("3: {}", n_3);
                 prime_filter[n_3 - min] ^= true;
             };
