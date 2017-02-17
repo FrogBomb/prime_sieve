@@ -68,11 +68,13 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             loop{
                 n_1 += to_next_n_1;
                 to_next_n_1 += 8;
-                match n_1%60{
-                    _ if n_1 < min => continue,
-                    _ if n_1 >= max => break,
-                    1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
-                    _ => continue,
+                match n_1{
+                    n if n < min => continue,
+                    n if n >= max => break,
+                    n => {match n%60{
+                        1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
+                        _ => continue,
+                    };},
                 };
                 prime_filter[n_1 - min] ^= true;
             };
@@ -84,11 +86,13 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             loop {
                 n_2 += to_next_n_2;
                 to_next_n_2 += 6;
-                match n_2%60{
-                    _ if n_2 < min => continue,
-                    _ if n_2 >= max => break,
-                    7 | 19 | 31 | 43 => (),
-                    _ => continue,
+                match n_2{
+                    n if n < min => continue,
+                    n if n >= max => break,
+                    n => {match n%60{
+                            7 | 19 | 31 | 43 => (),
+                            _ => continue,
+                        };}
                 };
 
                 prime_filter[n_2 - min] ^= true;
@@ -99,11 +103,13 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             //Amd then hop x by 2 each iteration.
             let (mut n_3, mut to_next_n_3) = (2*y_sq+3*to_next_y_sq, 6*to_next_y_sq+18);
             loop {
-                match n_3%60{
-                    _ if n_3 < min => (),
-                    _ if n_3 >= max => break,
-                    11 | 23 | 47 | 59 => {prime_filter[n_3 - min] ^= true;},
-                    _ => (),
+                match n_3{
+                    n if n < min => (),
+                    n if n >= max => break,
+                    n => {match n%60{
+                            11 | 23 | 47 | 59 => {prime_filter[n_3 - min] ^= true;},
+                            _ => (),
+                    };},
                 };
                 n_3 += to_next_n_3;
                 to_next_n_3 += 24;
