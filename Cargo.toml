@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 
 [dependencies]
-
+time = "*"
 # The release profile, used for `cargo build --release`.
 [profile.release]
 opt-level = 3
