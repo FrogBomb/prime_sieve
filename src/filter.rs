@@ -1,4 +1,43 @@
 use std;
+
+macro_rules! if_any_divides {
+     ( $( $div:tt ),* | $n:ident $if_b:block ) => { if $(($n % $div == 0))|* $if_b};
+}
+macro_rules! if_sm_prime_divides{
+    ( $n:ident $if_b:block ) => {if_any_divides!(
+    2, 3, 5, 7, 11, 13,
+    17, 19, 23, 29, 31,
+    37, 41, 43, 47, 53,
+    59, 61, 67, 71, 73,
+    79, 83, 89, 97, 101,
+    103, 107, 109, 113, 127,
+    131, 137, 139, 149, 151,
+    157, 163, 167, 173, 179,
+    181, 191, 193, 197, 199 | $n $if_b)};
+}
+macro_rules! set_true_if_in_range{
+    ( $( $i:tt ),* => $filter:ident + $offset:expr, $min:expr, $max:expr) => {
+        $(if ($min <= $i) & ($max > $i) {$filter[$i-$offset] = true;})*
+    };
+    ( $( $i:tt ),* => $filter:ident, $min:expr, $max:expr) => {
+        $(if ($min <= $i) & ($max > $i) {$filter[$i] = true;})*
+    };
+}
+macro_rules! set_sm_primes_true {
+    ($filter:expr, $min:expr, $max:expr) => {
+        set_true_if_in_range!(
+        2, 3, 5, 7, 11, 13,
+        17, 19, 23, 29, 31,
+        37, 41, 43, 47, 53,
+        59, 61, 67, 71, 73,
+        79, 83, 89, 97, 101,
+        103, 107, 109, 113, 127,
+        131, 137, 139, 149, 151,
+        157, 163, 167, 173, 179,
+        181, 191, 193, 197, 199 => $filter + $min, $min, $max)
+    };
+}
+
 pub fn prime_filter(iter_size: usize) -> Vec<bool>{
     if iter_size<100{
         slow_prime_filter(iter_size)
@@ -10,13 +49,20 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
     //Sieve of Atkin
     assert!(min<max);
     let mut prime_filter = vec![false; max-min];
-    if (min <= 2) & (max > 2) {prime_filter[2-min] = true;}
-    if (min <= 3) & (max > 3) {prime_filter[3-min] = true;}
-    if (min <= 5) & (max > 5) {prime_filter[5-min] = true;}
+
+    set_true_if_in_range!(2, 3, 5 => prime_filter + min, min, max);
+    //Macro equivilent:
+    // if (min <= 2) & (max > 2) {prime_filter[2-min] = true;}
+    // if (min <= 3) & (max > 3) {prime_filter[3-min] = true;}
+    // if (min <= 5) & (max > 5) {prime_filter[5-min] = true;}
+
+
 
     let (mut y_sq, mut to_next_y_sq) = (1, 3);
+
     while y_sq<max {
         if y_sq%2 == 1 {
+            //CASE 1
             //n_1 = 4x^2 + y^2 === 1 (mod 4)
             let (mut n_1, mut to_next_n_1) = (y_sq, 4);
             loop{
@@ -28,12 +74,11 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
                     _ => continue,
                 };
-
-                // println!("1: {}", n_1);
                 prime_filter[n_1 - min] ^= true;
             };
         };
         if y_sq%3 == 1 {
+            //CASE 2
             //n_2 = 3x^2 + y^2 === 1 (mod 6)
             let (mut n_2, mut to_next_n_2) = (y_sq, 3);
             loop {
@@ -45,22 +90,23 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                     7 | 19 | 31 | 43 => (),
                     _ => continue,
                 };
-                // println!("2: {}", n_2);
+
                 prime_filter[n_2 - min] ^= true;
             };
+            //CASE 3
             //n_3 = 3x^2 - y^2 === 11 (mod 12)
-            let (mut n_3, mut to_next_n_3) = (2*y_sq, 3*to_next_y_sq);
+            //Initially, we set x = y+1 -> n_3 = 3(y+1)^2 - y^2 = 2*y^2 + 6*y + 3
+            //Amd then hop x by 2 each iteration.
+            let (mut n_3, mut to_next_n_3) = (2*y_sq+3*to_next_y_sq, 6*to_next_y_sq+18);
             loop {
-                n_3 += to_next_n_3;
-                to_next_n_3 += 6;
                 match n_3%60{
-                    _ if n_3 < min => continue,
+                    _ if n_3 < min => (),
                     _ if n_3 >= max => break,
-                    11 | 23 | 47 | 59 => (),
-                    _ => continue,
+                    11 | 23 | 47 | 59 => {prime_filter[n_3 - min] ^= true;},
+                    _ => (),
                 };
-                // println!("3: {}", n_3);
-                prime_filter[n_3 - min] ^= true;
+                n_3 += to_next_n_3;
+                to_next_n_3 += 24;
             };
         };
         while{ //Do-while
@@ -69,6 +115,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             y_sq%6 == 0
         } {};
     };
+
     //Eliminate non-squarefree numbers
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
