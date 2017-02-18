@@ -7,6 +7,8 @@ mod tests {
         prime_filter,
         old_prime_filter,
     };
+    extern crate time;
+    use self::time::PreciseTime;
     #[test]
     fn test_prime_filter(){
         let n = 12345;
@@ -38,18 +40,36 @@ mod tests {
         };
     }
     #[test]
+    fn test_prime_sec_collection(){
+        let some_primes = [ 101,
+                            103, 107, 109, 113, 127,
+                            131, 137, 139, 149, 151,
+                            157, 163, 167, 173, 179,
+                            181, 191, 193, 197, 199];
+
+        let test_primes: Vec<usize> = primes_section(100, 200);
+        for i in 0..test_primes.len(){
+            assert_eq!(test_primes[i], some_primes[i], "Mismatch")
+        };
+    }
+    #[test]
     fn count_primes(){
-        let n = 1000000;
+        let n = 100_000_000;
+        let start = PreciseTime::now();
         let primes = primes(n);
+        let end = PreciseTime::now();
+        println!("{} seconds to find all primes less than {}!", start.to(end), n);
+        println!("{} primes total!", primes.len());
         let total_primes = primes.len();
-        assert_eq!(total_primes, 78498);
+        assert_eq!(total_primes, 5761455);
     }
     #[test]
     fn count_prime_section(){
-        let min = 1000000;
-        let max = 10000000;
+        let min = 1_000_000;
+        let max = 10_000_000;
         let primes = primes_section(min, max);
         let total_primes = primes.len();
         assert_eq!(total_primes, 586081);
     }
+
 }
