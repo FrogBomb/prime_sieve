@@ -8,6 +8,7 @@ mod tests {
         old_prime_filter,
     };
     extern crate time;
+    extern crate num_cpus;
     use self::time::PreciseTime;
     #[test]
     fn test_prime_filter(){
@@ -21,6 +22,7 @@ mod tests {
     use collection::{
         primes,
         primes_section,
+        primes_concurrently,
     };
     #[test]
     fn test_prime_collection(){
@@ -73,6 +75,18 @@ mod tests {
         println!("{} primes total!", primes.len());
         let total_primes = primes.len();
         assert_eq!(total_primes, 5761455);
+    }
+    #[test]
+    fn count_primes_concurrently(){
+        let threads = num_cpus::get() * 4;
+        let n = 1_000_000_000;
+        let start = PreciseTime::now();
+        let primes = primes_concurrently(n, threads);
+        let end = PreciseTime::now();
+        println!("{} seconds to find all primes less than {}! (Threads: {})", start.to(end), n, threads);
+        println!("{} primes total!", primes.len());
+        let total_primes = primes.len();
+        assert_eq!(total_primes, 50_847_534);
     }
     #[test]
     fn count_prime_section(){
