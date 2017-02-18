@@ -1,3 +1,5 @@
+extern crate num_cpus;
+
 use std;
 
 // macro_rules! if_any_divides {
