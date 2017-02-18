@@ -2,7 +2,22 @@
 name = "concurrent_prime_sieve"
 version = "0.1.1"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
-keywords = ["primes", "concurrent", "fast", "prime generator", "math"]
+keywords = ["primes", "concurrent", "fast", "generator", "math"]
+
+description = "Tools for generating filters and collections with primes concurrently.
+\nRust implementation of the Sieve of Atkin."
+
+repository = "https://github.com/FrogBomb/prime_sieve"
+
+readme = "README.md"
+
+categories = ["algorithms", "concurrency", "science"]
+
+license = "MIT"
+
+[badges]
+# Travis CI: `repository` is required. `branch` is optional; default is `master`
+travis-ci = { repository = "https://travis-ci.org/FrogBomb/prime_sieve", branch = "master" }
 
 [dependencies]
 num_cpus = "1.2.1"
