@@ -1,20 +1,20 @@
 use std;
 
-macro_rules! if_any_divides {
-     ( $( $div:tt ),* | $n:ident $if_b:block ) => { if $(($n % $div == 0))|* $if_b};
-}
-macro_rules! if_sm_prime_divides{
-    ( $n:ident $if_b:block ) => {if_any_divides!(
-    2, 3, 5, 7, 11, 13,
-    17, 19, 23, 29, 31,
-    37, 41, 43, 47, 53,
-    59, 61, 67, 71, 73,
-    79, 83, 89, 97, 101,
-    103, 107, 109, 113, 127,
-    131, 137, 139, 149, 151,
-    157, 163, 167, 173, 179,
-    181, 191, 193, 197, 199 | $n $if_b)};
-}
+// macro_rules! if_any_divides {
+//      ( $( $div:tt ),* | $n:ident $if_b:block ) => { if $(($n % $div == 0))|* $if_b};
+// }
+// macro_rules! if_sm_prime_divides{
+//     ( $n:ident $if_b:block ) => {if_any_divides!(
+//     2, 3, 5, 7, 11, 13,
+//     17, 19, 23, 29, 31,
+//     37, 41, 43, 47, 53,
+//     59, 61, 67, 71, 73,
+//     79, 83, 89, 97, 101,
+//     103, 107, 109, 113, 127,
+//     131, 137, 139, 149, 151,
+//     157, 163, 167, 173, 179,
+//     181, 191, 193, 197, 199 | $n $if_b)};
+// }
 macro_rules! set_true_if_in_range{
     ( $( $i:tt ),* => $filter:ident + $offset:expr, $min:expr, $max:expr) => {
         $(if ($min <= $i) & ($max > $i) {$filter[$i-$offset] = true;})*
@@ -23,20 +23,50 @@ macro_rules! set_true_if_in_range{
         $(if ($min <= $i) & ($max > $i) {$filter[$i] = true;})*
     };
 }
-macro_rules! set_sm_primes_true {
-    ($filter:expr, $min:expr, $max:expr) => {
-        set_true_if_in_range!(
-        2, 3, 5, 7, 11, 13,
-        17, 19, 23, 29, 31,
-        37, 41, 43, 47, 53,
-        59, 61, 67, 71, 73,
-        79, 83, 89, 97, 101,
-        103, 107, 109, 113, 127,
-        131, 137, 139, 149, 151,
-        157, 163, 167, 173, 179,
-        181, 191, 193, 197, 199 => $filter + $min, $min, $max)
-    };
+// macro_rules! set_sm_primes_true {
+//     ($filter:expr, $min:expr, $max:expr) => {
+//         set_true_if_in_range!(
+//         2, 3, 5, 7, 11, 13,
+//         17, 19, 23, 29, 31,
+//         37, 41, 43, 47, 53,
+//         59, 61, 67, 71, 73,
+//         79, 83, 89, 97, 101,
+//         103, 107, 109, 113, 127,
+//         131, 137, 139, 149, 151,
+//         157, 163, 167, 173, 179,
+//         181, 191, 193, 197, 199 => $filter + $min, $min, $max)
+//     };
+// }
+
+
+fn int_sqrt(n:usize) -> usize{
+    match n {
+        0 => 0,
+        1 ... 3 => 1,
+        4 ... 8 => 2,
+        9 ... 15 => 3,
+        k => {
+        let mut x = k;
+            loop{
+                x = match (x + n/x) >> 1 {
+                    new_x if new_x == x => break,
+                    new_x if new_x*new_x == n + 1 => {x = new_x - 1; break},
+                    new_x => new_x,
+                };
+            }
+            x
+        },
+    }
+
 }
+
+fn ceil_sqrt(n:usize) -> usize{
+    match int_sqrt(n){
+        sqrt if sqrt*sqrt == n => sqrt,
+        sqrt => sqrt+1,
+    }
+}
+
 
 pub fn prime_filter(iter_size: usize) -> Vec<bool>{
     if iter_size<100{
@@ -64,50 +94,76 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
         if y_sq%2 == 1 {
             //CASE 1
             //n_1 = 4x^2 + y^2 === 1 (mod 4)
-            let (mut n_1, mut to_next_n_1) = (y_sq, 4);
+            let (mut n_1, mut to_next_n_1) = match y_sq < min {
+                false => (y_sq+4, 12),
+                _ => {
+                    let min_x = ceil_sqrt((min - y_sq)/4);
+                    (4*min_x*min_x + y_sq, 8*min_x + 4)
+                },
+            };
             loop{
-                n_1 += to_next_n_1;
-                to_next_n_1 += 8;
+
                 match n_1{
-                    n if n < min => continue,
                     n if n >= max => break,
                     n => {match n%60{
-                        1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => (),
-                        _ => continue,
+                        1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => match n.checked_sub(min){
+                            Some(i) => prime_filter[i] ^= true,
+                            None => (),
+                        },
+                        _ => (),
                     };},
                 };
-                prime_filter[n_1 - min] ^= true;
+
+                n_1 += to_next_n_1;
+                to_next_n_1 += 8;
             };
         };
         if y_sq%3 == 1 {
             //CASE 2
             //n_2 = 3x^2 + y^2 === 1 (mod 6)
-            let (mut n_2, mut to_next_n_2) = (y_sq, 3);
+            let (mut n_2, mut to_next_n_2) = match y_sq < min {
+                false => (y_sq+3, 9),
+                _ => {
+                    let min_x = ceil_sqrt((min - y_sq)/3);
+                    (3*min_x*min_x + y_sq, 6*min_x + 3)
+                },
+            };
             loop {
-                n_2 += to_next_n_2;
-                to_next_n_2 += 6;
                 match n_2{
-                    n if n < min => continue,
                     n if n >= max => break,
                     n => {match n%60{
-                            7 | 19 | 31 | 43 => (),
-                            _ => continue,
+                            7 | 19 | 31 | 43 => match n.checked_sub(min){
+                                Some(i) => prime_filter[i] ^= true,
+                                None => (),
+                            },
+                            _ => (),
                         };}
                 };
-
-                prime_filter[n_2 - min] ^= true;
+                n_2 += to_next_n_2;
+                to_next_n_2 += 6;
             };
             //CASE 3
             //n_3 = 3x^2 - y^2 === 11 (mod 12)
             //Initially, we set x = y+1 -> n_3 = 3(y+1)^2 - y^2 = 2*y^2 + 6*y + 3
             //Amd then hop x by 2 each iteration.
-            let (mut n_3, mut to_next_n_3) = (2*y_sq+3*to_next_y_sq, 6*to_next_y_sq+18);
+            let (mut n_3, mut to_next_n_3) = match (y_sq << 1) < min {
+                false => (2*y_sq+3*to_next_y_sq, 6*to_next_y_sq+18),
+                _ => {
+                    let min_x = match ceil_sqrt((min + y_sq)/3){
+                        mx if (mx+y_sq)%2 == 0 => mx + 1,
+                        mx => mx,
+                    };
+                    (3*min_x*min_x - y_sq, 12*min_x + 12)
+                },
+            };
             loop {
                 match n_3{
-                    n if n < min => (),
                     n if n >= max => break,
                     n => {match n%60{
-                            11 | 23 | 47 | 59 => {prime_filter[n_3 - min] ^= true;},
+                            11 | 23 | 47 | 59 => match n.checked_sub(min){
+                                Some(i) => prime_filter[i] ^= true,
+                                None => (),
+                            },
                             _ => (),
                     };},
                 };
@@ -149,6 +205,18 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
 pub fn old_prime_filter(iter_size: usize) -> std::vec::Vec<bool>{
     slow_prime_filter(iter_size)
 }
+
+#[test]
+fn private_filter_test(){
+    assert_eq!(5, ceil_sqrt(24));
+    assert_eq!(2, int_sqrt(4));
+    assert_eq!(4, int_sqrt(24));
+    assert_eq!(10, int_sqrt(101));
+    assert_eq!(1, int_sqrt(1));
+    assert_eq!(10, int_sqrt(100));
+    assert_eq!(3, int_sqrt(13));
+}
+
 
 fn slow_prime_filter(iter_size: usize) -> std::vec::Vec<bool>{
     if iter_size < 5 {

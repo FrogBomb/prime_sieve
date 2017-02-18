@@ -40,6 +40,19 @@ mod tests {
         };
     }
     #[test]
+    fn test_prime_sec_collection(){
+        let some_primes = [ 101,
+                            103, 107, 109, 113, 127,
+                            131, 137, 139, 149, 151,
+                            157, 163, 167, 173, 179,
+                            181, 191, 193, 197, 199];
+
+        let test_primes: Vec<usize> = primes_section(100, 200);
+        for i in 0..test_primes.len(){
+            assert_eq!(test_primes[i], some_primes[i], "Mismatch")
+        };
+    }
+    #[test]
     fn count_primes(){
         let n = 100_000_000;
         let start = PreciseTime::now();
