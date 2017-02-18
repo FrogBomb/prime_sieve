@@ -20,7 +20,8 @@ travis-ci = { repository = "https://travis-ci.org/FrogBomb/prime_sieve", branch 
 
 [dependencies]
 num_cpus = "1.2.1"
-time = "*"
+time = "^0.1.36"
+
 # The release profile, used for `cargo build --release`.
 [profile.release]
 opt-level = 3
