@@ -99,7 +99,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             let (mut n_1, mut to_next_n_1) = match y_sq < min {
                 false => (y_sq+4, 12),
                 _ => {
-                    let min_x = ceil_sqrt((min - y_sq)/4);
+                    let min_x = (ceil_sqrt(min - y_sq) +1)/2;
                     (4*min_x*min_x + y_sq, 8*min_x + 4)
                 },
             };
@@ -108,10 +108,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 match n_1{
                     n if n >= max => break,
                     n => {match n%60{
-                        1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => match n.checked_sub(min){
-                            Some(i) => prime_filter[i] ^= true,
-                            None => (),
-                        },
+                        1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => prime_filter[n-min] ^= true,
                         _ => (),
                     };},
                 };
@@ -126,7 +123,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             let (mut n_2, mut to_next_n_2) = match y_sq < min {
                 false => (y_sq+3, 9),
                 _ => {
-                    let min_x = ceil_sqrt((min - y_sq)/3);
+                    let min_x = (ceil_sqrt((min - y_sq)*3)+2)/3;
                     (3*min_x*min_x + y_sq, 6*min_x + 3)
                 },
             };
@@ -134,10 +131,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 match n_2{
                     n if n >= max => break,
                     n => {match n%60{
-                            7 | 19 | 31 | 43 => match n.checked_sub(min){
-                                Some(i) => prime_filter[i] ^= true,
-                                None => (),
-                            },
+                            7 | 19 | 31 | 43 => prime_filter[n-min] ^= true,
                             _ => (),
                         };}
                 };
@@ -151,7 +145,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
             let (mut n_3, mut to_next_n_3) = match (y_sq << 1) < min {
                 false => (2*y_sq+3*to_next_y_sq, 6*to_next_y_sq+18),
                 _ => {
-                    let min_x = match ceil_sqrt((min + y_sq)/3){
+                    let min_x = match (ceil_sqrt((min + y_sq)*3) +2)/3{
                         mx if (mx+y_sq)%2 == 0 => mx + 1,
                         mx => mx,
                     };
@@ -162,10 +156,7 @@ pub fn prime_filter_section(min:usize, max: usize) -> Vec<bool>{
                 match n_3{
                     n if n >= max => break,
                     n => {match n%60{
-                            11 | 23 | 47 | 59 => match n.checked_sub(min){
-                                Some(i) => prime_filter[i] ^= true,
-                                None => (),
-                            },
+                            11 | 23 | 47 | 59 => prime_filter[n-min] ^= true,
                             _ => (),
                     };},
                 };
