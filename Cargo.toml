@@ -4,8 +4,7 @@ version = "0.1.1"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 keywords = ["primes", "concurrent", "fast", "generator", "math"]
 
-description = "Tools for generating filters and collections with primes concurrently.
-\nRust implementation of the Sieve of Atkin."
+description = "Tools for generating filters and collections with primes concurrently. \n Rust implementation of the Sieve of Atkin."
 
 repository = "https://github.com/FrogBomb/prime_sieve"
 
