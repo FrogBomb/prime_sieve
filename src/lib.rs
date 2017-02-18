@@ -53,6 +53,17 @@ mod tests {
         };
     }
     #[test]
+    fn can_take_any_section(){
+        let some_primes = old_prime_filter(200);
+        for min in 0..200{
+            for max in (min+1)..200{
+                for prime in primes_section(min, max).into_iter(){
+                    assert!(some_primes[prime], "bad case from {} to {}: prime: {}", min, max, prime);
+                }
+            }
+        }
+    }
+    #[test]
     fn count_primes(){
         let n = 100_000_000;
         let start = PreciseTime::now();
