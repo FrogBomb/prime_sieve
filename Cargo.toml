@@ -2,6 +2,7 @@
 name = "concurrent_prime_sieve"
 version = "0.1.1"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
+keywords = ["primes", "concurrent", "fast", "prime generator", "math"]
 
 [dependencies]
 num_cpus = "1.2.1"
