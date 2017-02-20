@@ -1,6 +1,7 @@
 extern crate num_cpus;
 pub mod filter;
 pub mod collection;
+mod concurrent_help;
 
 
 #[cfg(test)]
