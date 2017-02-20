@@ -63,7 +63,7 @@ mod tests {
         let some_primes = old_prime_filter(200);
         for min in 0..200{
             for max in (min+1)..200{
-                for (i, is_prime) in prime_filter_section(min, max).into_iter().enumerate(){
+                for (i, is_prime) in prime_filter_section_sequentially(min, max).into_iter().enumerate(){
                     assert_eq!(some_primes[min+i], is_prime, "bad case from {} to {}", min, max);
                 }
             }
@@ -74,7 +74,7 @@ mod tests {
         let some_primes = old_prime_filter(200);
         for min in 0..200{
             for max in (min+1)..200{
-                for prime in primes_section(min, max).into_iter(){
+                for prime in primes_section_sequentially(min, max).into_iter(){
                     assert!(some_primes[prime], "bad case from {} to {}: prime: {}", min, max, prime);
                 }
             }
