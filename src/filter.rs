@@ -50,13 +50,22 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
         let (tx, min, max) = (tx.clone(), min_num + seg_size*i,
                                 min_num + seg_size*(i+1));
         thread::spawn( move || {
-            tx.send((i, prime_filter_section_sequentially(min, max))).unwrap();
+            let to_send = match min-max {
+                0 => vec![],
+                _ => prime_filter_section_sequentially(min, max),
+            };
+            tx.send((i, to_send)).unwrap();
         });
     }
     if (min_num + seg_size*threads) != max_num {
+        res_vec.push(vec![]);
         let (tx, min, max) = (tx.clone(), min_num + seg_size*threads, max_num);
         thread::spawn( move || {
-            tx.send((threads, prime_filter_section_sequentially(min, max))).unwrap();
+            let to_send = match min-max {
+                0 => vec![],
+                _ => prime_filter_section_sequentially(min, max),
+            };
+            tx.send((threads, to_send)).unwrap();
         });
 
         let (i, p_sec) = match rx.recv(){
