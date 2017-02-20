@@ -7,8 +7,9 @@ pub mod collection;
 mod tests {
     use filter::{
         prime_filter,
-        prime_filter_section,
+        // prime_filter_section,
         old_prime_filter,
+        prime_filter_section_sequentially,
     };
     extern crate time;
     extern crate num_cpus;
@@ -26,7 +27,7 @@ mod tests {
         primes,
         primes_section,
         primes_concurrently,
-        // primes_section_sequentially,
+        primes_section_sequentially,
     };
     #[test]
     fn test_prime_collection(){
