@@ -1,5 +1,7 @@
+extern crate num_cpus;
 pub mod filter;
 pub mod collection;
+
 
 #[cfg(test)]
 mod tests {
@@ -23,8 +25,9 @@ mod tests {
         primes,
         primes_section,
         primes_concurrently,
+        primes_section_sequentially,
     };
-    #[test]
+    // #[test]
     fn test_prime_collection(){
         let some_primes = [ 2, 3, 5, 7, 11, 13,
                             17, 19, 23, 29, 31,
@@ -41,7 +44,7 @@ mod tests {
             assert_eq!(test_primes[i], some_primes[i], "Mismatch")
         };
     }
-    #[test]
+    // #[test]
     fn test_prime_sec_collection(){
         let some_primes = [ 101,
                             103, 107, 109, 113, 127,
@@ -59,13 +62,13 @@ mod tests {
         let some_primes = old_prime_filter(200);
         for min in 0..200{
             for max in (min+1)..200{
-                for prime in primes_section(min, max).into_iter(){
+                for prime in primes_section_sequentially(min, max).into_iter(){
                     assert!(some_primes[prime], "bad case from {} to {}: prime: {}", min, max, prime);
                 }
             }
         }
     }
-    #[test]
+    // #[test]
     fn count_primes(){
         let n = 100_000_000;
         let start = PreciseTime::now();
@@ -78,7 +81,7 @@ mod tests {
     }
     #[test]
     fn count_primes_concurrently(){
-        let threads = num_cpus::get() * 4;
+        let threads = num_cpus::get();
         let n = 1_000_000_000;
         let start = PreciseTime::now();
         let primes = primes_concurrently(n, threads);
@@ -88,7 +91,7 @@ mod tests {
         let total_primes = primes.len();
         assert_eq!(total_primes, 50_847_534);
     }
-    #[test]
+    // #[test]
     fn count_prime_section(){
         let min = 1_000_000;
         let max = 10_000_000;
