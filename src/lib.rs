@@ -1,11 +1,15 @@
+extern crate num_cpus;
 pub mod filter;
 pub mod collection;
+
 
 #[cfg(test)]
 mod tests {
     use filter::{
         prime_filter,
+        // prime_filter_section,
         old_prime_filter,
+        prime_filter_section_sequentially,
     };
     extern crate time;
     extern crate num_cpus;
@@ -23,6 +27,7 @@ mod tests {
         primes,
         primes_section,
         primes_concurrently,
+        primes_section_sequentially,
     };
     #[test]
     fn test_prime_collection(){
@@ -55,11 +60,22 @@ mod tests {
         };
     }
     #[test]
+    fn can_take_any_section_filter(){
+        let some_primes = old_prime_filter(200);
+        for min in 0..200{
+            for max in (min+1)..200{
+                for (i, is_prime) in prime_filter_section_sequentially(min, max).into_iter().enumerate(){
+                    assert_eq!(some_primes[min+i], is_prime, "bad case from {} to {}", min, max);
+                }
+            }
+        }
+    }
+    #[test]
     fn can_take_any_section(){
         let some_primes = old_prime_filter(200);
         for min in 0..200{
             for max in (min+1)..200{
-                for prime in primes_section(min, max).into_iter(){
+                for prime in primes_section_sequentially(min, max).into_iter(){
                     assert!(some_primes[prime], "bad case from {} to {}: prime: {}", min, max, prime);
                 }
             }
@@ -78,7 +94,7 @@ mod tests {
     }
     #[test]
     fn count_primes_concurrently(){
-        let threads = num_cpus::get() * 4;
+        let threads = num_cpus::get()*4;
         let n = 1_000_000_000;
         let start = PreciseTime::now();
         let primes = primes_concurrently(n, threads);
