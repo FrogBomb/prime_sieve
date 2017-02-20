@@ -7,6 +7,7 @@ pub mod collection;
 mod tests {
     use filter::{
         prime_filter,
+        prime_filter_section,
         old_prime_filter,
     };
     extern crate time;
@@ -25,7 +26,7 @@ mod tests {
         primes,
         primes_section,
         primes_concurrently,
-        primes_section_sequentially,
+        // primes_section_sequentially,
     };
     #[test]
     fn test_prime_collection(){
@@ -56,6 +57,17 @@ mod tests {
         for i in 0..test_primes.len(){
             assert_eq!(test_primes[i], some_primes[i], "Mismatch")
         };
+    }
+    #[test]
+    fn can_take_any_section_filter(){
+        let some_primes = old_prime_filter(200);
+        for min in 0..200{
+            for max in (min+1)..200{
+                for (i, is_prime) in prime_filter_section(min, max).into_iter().enumerate(){
+                    assert_eq!(some_primes[min+i], is_prime, "bad case from {} to {}", min, max);
+                }
+            }
+        }
     }
     #[test]
     fn can_take_any_section(){

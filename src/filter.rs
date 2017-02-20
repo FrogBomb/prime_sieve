@@ -112,11 +112,11 @@ fn ceil_sqrt(n:usize) -> usize{
     }
 }
 pub fn prime_filter(iter_size: usize) -> Vec<bool>{
-    prime_filter_sequentially(iter_size)
+    prime_filter_concurrently(iter_size, num_cpus::get())
 }
 
 pub fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>{
-    prime_filter_section_sequentially(min_num, max_num)
+    prime_filter_section_concurrently(min_num, max_num, num_cpus::get())
 }
 
 pub fn prime_filter_sequentially(iter_size: usize) -> Vec<bool>{
