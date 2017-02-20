@@ -39,8 +39,8 @@ macro_rules! set_true_if_in_range{
 //         181, 191, 193, 197, 199 => $filter + $min, $min, $max)
 //     };
 // }
-pub fn prime_filter_concurrently(iter_size: usize, threads: usize) -> Vec<bool>{
-    prime_filter_section_concurrently(0, iter_size, threads)
+pub fn prime_filter_concurrently(max_num: usize, threads: usize) -> Vec<bool>{
+    prime_filter_section_concurrently(0, max_num, threads)
 }
 pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads: usize) -> Vec<bool>{
     let mut res_vec: Vec<Vec<bool>> = vec![vec![]; threads];
@@ -111,19 +111,19 @@ fn ceil_sqrt(n:usize) -> usize{
         sqrt => sqrt+1,
     }
 }
-pub fn prime_filter(iter_size: usize) -> Vec<bool>{
-    prime_filter_concurrently(iter_size, num_cpus::get())
+pub fn prime_filter(max_num: usize) -> Vec<bool>{
+    prime_filter_concurrently(max_num, num_cpus::get())
 }
 
 pub fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>{
     prime_filter_section_concurrently(min_num, max_num, num_cpus::get())
 }
 
-pub fn prime_filter_sequentially(iter_size: usize) -> Vec<bool>{
-    if iter_size<100{
-        slow_prime_filter(iter_size)
+pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
+    if max_num<100{
+        slow_prime_filter(max_num)
     }else{
-        prime_filter_section(0, iter_size)
+        prime_filter_section(0, max_num)
     }
 }
 pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<bool>{
@@ -244,8 +244,8 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
 }
 
 #[cfg(test)]
-pub fn old_prime_filter(iter_size: usize) -> std::vec::Vec<bool>{
-    slow_prime_filter(iter_size)
+pub fn old_prime_filter(max_num: usize) -> std::vec::Vec<bool>{
+    slow_prime_filter(max_num)
 }
 
 #[test]
@@ -260,23 +260,23 @@ fn private_filter_test(){
 }
 
 
-fn slow_prime_filter(iter_size: usize) -> std::vec::Vec<bool>{
-    if iter_size < 5 {
+fn slow_prime_filter(max_num: usize) -> std::vec::Vec<bool>{
+    if max_num < 5 {
          let mut ret = vec![false, false, true, true];
-         ret.truncate(iter_size);
+         ret.truncate(max_num);
          return ret
      }
-    let mut prime_filter = vec![true; iter_size];
+    let mut prime_filter = vec![true; max_num];
     prime_filter[0] = false;
     prime_filter[1] = false;
     let mut cur_num = 2;
     'outer: loop{
-        for i in (cur_num+1)..iter_size{
+        for i in (cur_num+1)..max_num{
             if 0 == i%cur_num { prime_filter[i] = false; }
         }
         cur_num += 1;
         while !prime_filter[cur_num]{
-            if cur_num*cur_num > iter_size {
+            if cur_num*cur_num > max_num {
                 break 'outer
             }
             cur_num += 1;
