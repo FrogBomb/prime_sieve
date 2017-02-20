@@ -50,7 +50,7 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
         let (tx, min, max) = (tx.clone(), min_num + seg_size*i,
                                 min_num + seg_size*(i+1));
         thread::spawn( move || {
-            let to_send = match min-max {
+            let to_send = match max-min {
                 0 => vec![],
                 _ => prime_filter_section_sequentially(min, max),
             };
@@ -61,7 +61,7 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
         res_vec.push(vec![]);
         let (tx, min, max) = (tx.clone(), min_num + seg_size*threads, max_num);
         thread::spawn( move || {
-            let to_send = match min-max {
+            let to_send = match max-min {
                 0 => vec![],
                 _ => prime_filter_section_sequentially(min, max),
             };
