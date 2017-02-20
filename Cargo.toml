@@ -1,6 +1,6 @@
 [package]
 name = "concurrent_prime_sieve"
-version = "0.1.1"
+version = "1.0.0"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 keywords = ["primes", "concurrent", "fast", "generator", "math"]
 
@@ -19,7 +19,7 @@ license = "MIT"
 travis-ci = { repository = "https://travis-ci.org/FrogBomb/prime_sieve", branch = "master" }
 
 [dependencies]
-num_cpus = "1.2.1"
+num_cpus = "^1.2.1"
 time = "^0.1.36"
 
 # The release profile, used for `cargo build --release`.
