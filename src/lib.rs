@@ -95,7 +95,7 @@ mod tests {
     }
     #[test]
     fn count_primes_concurrently(){
-        let threads = num_cpus::get()*4;
+        let threads = num_cpus::get();
         let n = 1_000_000_000;
         let start = PreciseTime::now();
         let primes = primes_concurrently(n, threads);

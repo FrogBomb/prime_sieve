@@ -46,6 +46,9 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
 }
 
 fn int_sqrt(n:usize) -> usize{
+    if n < (1 << 53) {
+        return (n as f64).sqrt() as usize;
+    }
     match n {
         0 => 0,
         1 ... 3 => 1,
