@@ -90,9 +90,10 @@ pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
     if max_num<100{
         slow_prime_filter(max_num)
     }else{
-        prime_filter_section(0, max_num)
+        prime_filter_section_sequentially(0, max_num)
     }
 }
+
 pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<bool>{
     //Sieve of Atkin
     assert!(min_num<max_num);
