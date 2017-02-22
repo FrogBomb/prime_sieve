@@ -4,13 +4,11 @@ Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
 
-This implementation runs in O(sqrt(max_num) + max_num - min_num), thus
-it is asymptotically faster than the Sieve of Eratosthenes for finding
-primes in fixed-sized sections. (fixed-sized section runtime = O(sqrt(max_num))
+This implementation runs in O(sqrt(max_num)) for finding fixed-sized sections of primes.
 
 Therefore, this implementation will run faster than any implementation of the
-Sieve of Eratosthenes with the same number of cores for a large enough number
-of cores, making it ideal for parallel processing.
+Sieve of Eratosthenes with the same number of cores as the number of cores increases,
+making it ideal for parallel processing.
 
 ## `concurrent_prime_sieve::filter`
 ```Rust
