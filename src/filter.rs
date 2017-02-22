@@ -70,6 +70,9 @@ fn int_sqrt(n:usize) -> usize{
 }
 
 fn ceil_sqrt(n:usize) -> usize{
+    if n == 0{
+        return 0;
+    }
     match int_sqrt(n){
         sqrt if sqrt*sqrt == n => sqrt,
         sqrt => sqrt+1,
@@ -184,11 +187,15 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
         } {};
     };
 
-    //Elimin_numate non-squarefree numbers
+    //Eliminate non-squarefree numbers
+
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
     while n_sq < max_num {
-        let mut non_sq_free = n_sq;
+        let mut non_sq_free =  n_sq * match min_num/n_sq{
+            k if k%2 == 1 => k,
+            k => k + 1,
+        };
         while non_sq_free < max_num {
             if non_sq_free >= min_num {
                 prime_filter[non_sq_free - min_num] = false;
