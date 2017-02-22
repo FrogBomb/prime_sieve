@@ -1,5 +1,5 @@
 
-# concurrent_prime_sieve (v 0.2.2) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
+# concurrent_prime_sieve (v 0.2.3) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
 Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
@@ -8,7 +8,7 @@ This implementation runs in O(sqrt(max_num)) for finding fixed-sized sections of
 
 Therefore, this implementation will run faster than any implementation of the
 Sieve of Eratosthenes with the same number of cores as the number of cores increases,
-making it ideal for parallel processing.
+making it ideal for parallel processing or distributed computing tasks.
 
 ## `concurrent_prime_sieve::filter`
 ```Rust
@@ -27,6 +27,7 @@ fn prime_filter_concurrently(max_num: usize, threads: usize) -> Vec<bool>
 fn prime_filter_sequentially(max_num: usize) -> Vec<bool>
 ```
 >Similar to `fn prime_filter`, but does not spawn any new threads.
+> _(Note: This function has not been optimized. May eventually borrow an outside resource.)_
 
 ```Rust
 fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>
@@ -60,6 +61,7 @@ fn primes_concurrently(max_num:usize, threads:usize) -> Vec<usize>
 fn primes_sequentially(max_num: usize) -> Vec<usize>
 ```
 >Similar to `fn primes`, but does not spawn any new threads.
+> _(Note: This function has not been optimized. May eventually borrow an outside resource.)_
 
 ```Rust
 fn primes_section(min_num: usize, max_num: usize) -> Vec<usize>

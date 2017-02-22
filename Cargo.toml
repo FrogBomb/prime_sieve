@@ -1,10 +1,10 @@
 [package]
 name = "concurrent_prime_sieve"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 keywords = ["primes", "concurrent", "fast", "generator", "math"]
 
-description = "Tools for generating filters and collections with primes concurrently. \n Rust implementation of the Sieve of Atkin."
+description = "Tools for generating filters and collections with primes concurrently. \n \n  Rust implementation of the Sieve of Atkin. \n \n This implementation runs in O(sqrt(max_num)) for finding fixed-sized sections of primes."
 
 repository = "https://github.com/FrogBomb/prime_sieve"
 
@@ -20,6 +20,8 @@ travis-ci = { repository = "https://travis-ci.org/FrogBomb/prime_sieve", branch 
 
 [dependencies]
 num_cpus = "^1.2.1"
+
+[dev-dependencies]
 time = "^0.1.36"
 
 # The release profile, used for `cargo build --release`.
