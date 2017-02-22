@@ -46,6 +46,9 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
 }
 
 fn int_sqrt(n:usize) -> usize{
+    if n < (1 << 53) {
+        return (n as f64).sqrt() as usize;
+    }
     match n {
         0 => 0,
         1 ... 3 => 1,
@@ -67,6 +70,9 @@ fn int_sqrt(n:usize) -> usize{
 }
 
 fn ceil_sqrt(n:usize) -> usize{
+    if n == 0{
+        return 0;
+    }
     match int_sqrt(n){
         sqrt if sqrt*sqrt == n => sqrt,
         sqrt => sqrt+1,
@@ -84,9 +90,10 @@ pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
     if max_num<100{
         slow_prime_filter(max_num)
     }else{
-        prime_filter_section(0, max_num)
+        prime_filter_section_sequentially(0, max_num)
     }
 }
+
 pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<bool>{
     //Sieve of Atkin
     assert!(min_num<max_num);
@@ -181,11 +188,15 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
         } {};
     };
 
-    //Elimin_numate non-squarefree numbers
+    //Eliminate non-squarefree numbers
+
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
     while n_sq < max_num {
-        let mut non_sq_free = n_sq;
+        let mut non_sq_free =  n_sq * match min_num/n_sq{
+            k if k%2 == 1 => k,
+            k => k + 1,
+        };
         while non_sq_free < max_num {
             if non_sq_free >= min_num {
                 prime_filter[non_sq_free - min_num] = false;
