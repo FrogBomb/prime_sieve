@@ -1,6 +1,14 @@
 use std::thread;
 use std::sync::mpsc;
 
+#[cfg(test)]
+extern crate time;
+
+#[cfg(test)]
+fn mark_time(i:usize, size: usize, s_time: time::PreciseTime){
+    println!("Thread: {}, size:{} time: {}", i, size, s_time.to(time::PreciseTime::now()));
+}
+
 pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
             min_num: usize, max_num: usize, threads: usize) -> Vec<T>
             where
@@ -10,6 +18,10 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
     let mut res_vec:  Vec<Vec<T>> = vec![vec![]; threads];
     let seg_size = (max_num - min_num)/threads;
     let (tx, rx) = mpsc::channel();
+
+    #[cfg(test)]
+    let start = time::PreciseTime::now();
+
     for i in 0..threads{
         let (tx, min, max) = (tx.clone(), min_num + seg_size*i,
                                 min_num + seg_size*(i+1));
@@ -18,6 +30,10 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
                 0 => vec![],
                 _ => seq_fun(min, max),
             };
+
+            #[cfg(test)]
+            mark_time(i, max-min, start);
+
             tx.send((i, to_send)).unwrap();
         });
     }
@@ -29,6 +45,7 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
                 0 => vec![],
                 _ => seq_fun(min, max),
             };
+
             tx.send((threads, to_send)).unwrap();
         });
 

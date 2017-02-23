@@ -20,6 +20,7 @@ travis-ci = { repository = "https://travis-ci.org/FrogBomb/prime_sieve", branch 
 
 [dependencies]
 num_cpus = "^1.2.1"
+primal-sieve = "^0.2.6"
 
 [dev-dependencies]
 time = "^0.1.36"

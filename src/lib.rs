@@ -1,4 +1,5 @@
 extern crate num_cpus;
+extern crate primal_sieve;
 
 #[macro_use]
 mod macros;
