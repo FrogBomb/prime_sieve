@@ -43,8 +43,8 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
             //
             // #[cfg(test)]
             // mark_time(0, (min, max), start);
-            //
-            // tx.send((0, to_send)).unwrap();
+            
+            tx.send((0, to_send)).unwrap();
         });
     }
     for i in 1..threads{
@@ -55,7 +55,7 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
                 0 => vec![],
                 _ => seq_fun(min, max),
             };
-            // 
+            //
             // #[cfg(test)]
             // mark_time(i, (min, max), start);
 
