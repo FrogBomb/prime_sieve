@@ -28,5 +28,5 @@ pub fn primes_concurrently(max_num:usize, threads:usize) -> Vec<usize>{
     primes_section_concurrently(0, max_num, threads)
 }
 pub fn primes_section_concurrently(min_num:usize, max_num:usize, threads:usize) -> Vec<usize>{
-    to_concurrent_on_section(primes_section_sequentially, min_num, max_num, threads)
+    to_concurrent_on_section(primes_section_sequentially, min_num, max_num, threads, 4)
 }

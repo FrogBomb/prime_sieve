@@ -117,5 +117,15 @@ mod tests {
         let total_primes = primes.len();
         assert_eq!(total_primes, 586081);
     }
-
+    #[test]
+    fn count_primes_with_filter(){
+        let n = 100_000_000;
+        let start = PreciseTime::now();
+        let primes = prime_filter(n);
+        let end = PreciseTime::now();
+        println!("{} seconds to generate a prime filter less than {}!", start.to(end), n);
+        println!("{} primes total!", primes.len());
+        let total_primes = primes.iter().fold(0, |acc, &x| acc + (if x {1} else {0}));
+        assert_eq!(total_primes, 5761455);
+    }
 }

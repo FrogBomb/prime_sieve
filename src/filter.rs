@@ -6,7 +6,7 @@ pub fn prime_filter_concurrently(max_num: usize, threads: usize) -> Vec<bool>{
     prime_filter_section_concurrently(0, max_num, threads)
 }
 pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads: usize) -> Vec<bool>{
-    to_concurrent_on_section(prime_filter_section_sequentially, min_num, max_num, threads)
+    to_concurrent_on_section(prime_filter_section_sequentially, min_num, max_num, threads, 12)
 }
 
 fn int_sqrt(n:usize) -> usize{
