@@ -1,10 +1,10 @@
 [package]
 name = "concurrent_prime_sieve"
-version = "0.2.3"
+version = "0.2.4"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 keywords = ["primes", "concurrent", "fast", "generator", "math"]
 
-description = "Tools for generating filters and collections with primes concurrently. \n \n  Rust implementation of the Sieve of Atkin. \n \n This implementation runs in O(sqrt(max_num)) for finding fixed-sized sections of primes."
+description = "Tools for generating filters and collections with primes concurrently. Rust implementation of the Sieve of Atkin. This implementation runs in O( sqrt(max_num) + section_size ) (where section_size = max_num - min_num)"
 
 repository = "https://github.com/FrogBomb/prime_sieve"
 

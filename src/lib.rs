@@ -1,4 +1,7 @@
 extern crate num_cpus;
+
+#[macro_use]
+mod macros;
 pub mod filter;
 pub mod collection;
 mod concurrent_help;
