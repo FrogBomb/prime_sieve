@@ -1,5 +1,5 @@
 
-# concurrent_prime_sieve (v 0.2.4) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
+# concurrent_prime_sieve (v 0.2.5) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
 Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
@@ -7,9 +7,11 @@ Rust implementation of the Sieve of Atkin.
 This implementation runs in O( sqrt(max_num) + section_size )
 (where section_size = max_num - min_num)
 
-This implementation built to work well with parallel processing, distributed computing tasks, or if a reasonably large section of primes is desired within a range that is roughly quadratic to the size of the section. (e.g., If you need primes in a block of size 10^9 starting at 10^18.)
+This implementation built to work well with parallel processing, distributed computing tasks, or if a reasonably large section of primes is desired within a range that is roughly quadratic to the size of the section. (e.g., If you need primes in a block of size 10^9 starting at roughtly 10^18.) By integrating Huon Wilson's primal package (see below), this package also is able to more quickly calculate all primes below a desired threshold through concurrency.
 
-There is no need to calculate smaller primes or to have any communication between threads, as each section of primes is calculated completely independently. 
+With this algorithm, there is no need to calculate smaller primes or to have any communication between threads, as each section of primes is calculated completely independently. Therefore, it is efficient for and very easily implemented in a distributed system.
+
+*This package takes advantage of the (very good) primal package by Huon Wilson (located here: https://crates.io/crates/primal) to compute the edge case with primes starting from 0. This is simply faster than using just the algorithm here, which is built for concurrency. The algorithm implemented there is approximately 12 times faster when calculating primes from 0 than this implementation. This package uses that to cut the time to find the same number of primes by 12/(cores+11).*
 
 ## `concurrent_prime_sieve::filter`
 ```Rust
@@ -28,7 +30,7 @@ fn prime_filter_concurrently(max_num: usize, threads: usize) -> Vec<bool>
 fn prime_filter_sequentially(max_num: usize) -> Vec<bool>
 ```
 >Similar to `fn prime_filter`, but does not spawn any new threads.
-> _(Note: This function has not been optimized. May eventually borrow an outside resource.)_
+> _(Note: This is just the vector cast of primal_sieve::Sieve.)_
 
 ```Rust
 fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>
@@ -62,7 +64,7 @@ fn primes_concurrently(max_num:usize, threads:usize) -> Vec<usize>
 fn primes_sequentially(max_num: usize) -> Vec<usize>
 ```
 >Similar to `fn primes`, but does not spawn any new threads.
-> _(Note: This function has not been optimized. May eventually borrow an outside resource.)_
+> _(Note: This is just a vector cast of the primal_sieve::SievePrimes.)_
 
 ```Rust
 fn primes_section(min_num: usize, max_num: usize) -> Vec<usize>

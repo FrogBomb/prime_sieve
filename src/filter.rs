@@ -1,11 +1,12 @@
 use concurrent_help::to_concurrent_on_section;
 use num_cpus;
+use primal_sieve;
 
 pub fn prime_filter_concurrently(max_num: usize, threads: usize) -> Vec<bool>{
     prime_filter_section_concurrently(0, max_num, threads)
 }
 pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads: usize) -> Vec<bool>{
-    to_concurrent_on_section(prime_filter_section_sequentially, min_num, max_num, threads)
+    to_concurrent_on_section(prime_filter_section_sequentially, min_num, max_num, threads, 12)
 }
 
 fn int_sqrt(n:usize) -> usize{
@@ -43,11 +44,15 @@ pub fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>{
 }
 
 pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
-    prime_filter_section_sequentially(0, max_num)
+    let ps = primal_sieve::Sieve::new(max_num);
+    (0..max_num).map(|i| ps.is_prime(i)).collect()
 }
 
 pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<bool>{
     //Sieve of Atkin
+    if min_num == 0{
+        return prime_filter_sequentially(max_num);
+    }
     assert!(min_num<max_num);
     let mut prime_filter = vec![false; max_num-min_num];
 
@@ -146,7 +151,7 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
     //will iterate floor((max_num - min_num)/n^2) + 1 times for each n
     //Since the number of n's is proportional to sqrt(max_num),
     //And since the series of 1/n^2 converges, we obtain the above complexity.
-    
+
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
     while n_sq < max_num {
