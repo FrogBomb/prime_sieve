@@ -45,5 +45,5 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
         };
         res_vec[i] = p_sec;
     }
-    res_vec.into_iter().flat_map(|x| x).collect()
+    res_vec.concat()
 }

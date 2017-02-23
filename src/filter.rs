@@ -1,43 +1,6 @@
-use std;
 use concurrent_help::to_concurrent_on_section;
 use num_cpus;
-// macro_rules! if_any_divides {
-//      ( $( $div:tt ),* | $n:ident $if_b:block ) => { if $(($n % $div == 0))|* $if_b};
-// }
-// macro_rules! if_sm_prime_divides{
-//     ( $n:ident $if_b:block ) => {if_any_divides!(
-//     2, 3, 5, 7, 11, 13,
-//     17, 19, 23, 29, 31,
-//     37, 41, 43, 47, 53,
-//     59, 61, 67, 71, 73,
-//     79, 83, 89, 97, 101,
-//     103, 107, 109, 113, 127,
-//     131, 137, 139, 149, 151,
-//     157, 163, 167, 173, 179,
-//     181, 191, 193, 197, 199 | $n $if_b)};
-// }
-macro_rules! set_true_if_in_range{
-    ( $( $i:tt ),* => $filter:ident + $offset:expr, $min:expr, $max:expr) => {
-        $(if ($min <= $i) & ($max > $i) {$filter[$i-$offset] = true;})*
-    };
-    ( $( $i:tt ),* => $filter:ident, $min:expr, $max:expr) => {
-        $(if ($min <= $i) & ($max > $i) {$filter[$i] = true;})*
-    };
-}
-// macro_rules! set_sm_primes_true {
-//     ($filter:expr, $min:expr, $max:expr) => {
-//         set_true_if_in_range!(
-//         2, 3, 5, 7, 11, 13,
-//         17, 19, 23, 29, 31,
-//         37, 41, 43, 47, 53,
-//         59, 61, 67, 71, 73,
-//         79, 83, 89, 97, 101,
-//         103, 107, 109, 113, 127,
-//         131, 137, 139, 149, 151,
-//         157, 163, 167, 173, 179,
-//         181, 191, 193, 197, 199 => $filter + $min, $min, $max)
-//     };
-// }
+
 pub fn prime_filter_concurrently(max_num: usize, threads: usize) -> Vec<bool>{
     prime_filter_section_concurrently(0, max_num, threads)
 }
@@ -47,15 +10,9 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
 
 fn int_sqrt(n:usize) -> usize{
     if n < (1 << 53) {
-        return (n as f64).sqrt() as usize;
-    }
-    match n {
-        0 => 0,
-        1 ... 3 => 1,
-        4 ... 8 => 2,
-        9 ... 15 => 3,
-        k => {
-        let mut x = k;
+        (n as f64).sqrt() as usize
+    }else{
+        let mut x = n;
             loop{
                 x = match (x + n/x) >> 1 {
                     new_x if new_x == x => break,
@@ -63,8 +20,7 @@ fn int_sqrt(n:usize) -> usize{
                     new_x => new_x,
                 };
             }
-            x
-        },
+        x
     }
 
 }
@@ -87,11 +43,7 @@ pub fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>{
 }
 
 pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
-    if max_num<100{
-        slow_prime_filter(max_num)
-    }else{
-        prime_filter_section_sequentially(0, max_num)
-    }
+    prime_filter_section_sequentially(0, max_num)
 }
 
 pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<bool>{
@@ -105,10 +57,9 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
     // if (min_num <= 3) & (max_num > 3) {prime_filter[3-min_num] = true;}
     // if (min_num <= 5) & (max_num > 5) {prime_filter[5-min_num] = true;}
 
-
-
     let (mut y_sq, mut to_next_y_sq) = (1, 3);
 
+    //O(sqrt(max_num)*(sqrt(max_num) - sqrt(min_num)))
     while y_sq<max_num {
         if y_sq%2 == 1 {
             //CASE 1
@@ -181,15 +132,21 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 to_next_n_3 += 24;
             };
         };
-        while{ //Do-while
+        do_while!({
             y_sq += to_next_y_sq;
             to_next_y_sq += 2;
-            y_sq%6 == 0
-        } {};
+        } y_sq%6 == 0 );
     };
 
     //Eliminate non-squarefree numbers
 
+    //O(max_num - min_num + sqrt(max_num))
+
+    //This is because the inner loop
+    //will iterate floor((max_num - min_num)/n^2) + 1 times for each n
+    //Since the number of n's is proportional to sqrt(max_num),
+    //And since the series of 1/n^2 converges, we obtain the above complexity.
+    
     let mut n_sq = 49; // 7^2
     let mut next_n_sq = 32; //9^2 - 7^2, skip even numbers.
     while n_sq < max_num {
@@ -201,22 +158,21 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
             if non_sq_free >= min_num {
                 prime_filter[non_sq_free - min_num] = false;
             }
-            while{ //Do-while
+            do_while!({
                 non_sq_free += n_sq + n_sq;
-                (non_sq_free%3==0) | (non_sq_free%5==0)
-            } {};
+            } (non_sq_free%3==0) | (non_sq_free%5==0));
+
         };
-        while{ //Do-while
+        do_while!({
             n_sq += next_n_sq;
             next_n_sq += 8;
-            (n_sq%3==0) | (n_sq%5 == 0)
-        } {};
+        }(n_sq%3==0) | (n_sq%5 == 0));
     }
     prime_filter
 }
 
 #[cfg(test)]
-pub fn old_prime_filter(max_num: usize) -> std::vec::Vec<bool>{
+pub fn old_prime_filter(max_num: usize) -> Vec<bool>{
     slow_prime_filter(max_num)
 }
 
@@ -231,8 +187,8 @@ fn private_filter_test(){
     assert_eq!(3, int_sqrt(13));
 }
 
-
-fn slow_prime_filter(max_num: usize) -> std::vec::Vec<bool>{
+#[cfg(test)]
+fn slow_prime_filter(max_num: usize) -> Vec<bool>{
     if max_num < 5 {
          let mut ret = vec![false, false, true, true];
          ret.truncate(max_num);
