@@ -13,6 +13,18 @@
 //     157, 163, 167, 173, 179,
 //     181, 191, 193, 197, 199 | $n $if_b)};
 // }
+
+macro_rules! do_if_mod_60_match_pat{
+    ($($case_pattern:pat)|+, $n:ident < $max:ident, $operation:expr) =>{
+                    match $n{
+                        n if n >= $max => break,
+                        n => {match n%60{
+                            $($case_pattern)|+ => $operation,
+                            _ => (),
+                        };},
+                    }
+                }
+}
 macro_rules! set_true_if_in_range{
     ( $( $i:tt ),* => $filter:ident + $offset:expr, $min:expr, $max:expr) => {
         $(if ($min <= $i) & ($max > $i) {$filter[$i-$offset] = true;})*

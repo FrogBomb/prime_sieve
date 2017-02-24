@@ -23,7 +23,6 @@ fn int_sqrt(n:usize) -> usize{
             }
         x
     }
-
 }
 
 fn ceil_sqrt(n:usize) -> usize{
@@ -77,15 +76,8 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 },
             };
             loop{
-
-                match n_1{
-                    n if n >= max_num => break,
-                    n => {match n%60{
-                        1 | 13 | 17 | 29 | 37 | 41 | 49 | 53 => prime_filter[n-min_num] ^= true,
-                        _ => (),
-                    };},
-                };
-
+                do_if_mod_60_match_pat!( 1 | 13 | 17 | 29 | 37 | 41 | 49 | 53, n_1 < max_num,
+                    prime_filter[n_1-min_num] ^= true);
                 n_1 += to_next_n_1;
                 to_next_n_1 += 8;
             };
@@ -101,13 +93,8 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 },
             };
             loop {
-                match n_2{
-                    n if n >= max_num => break,
-                    n => {match n%60{
-                            7 | 19 | 31 | 43 => prime_filter[n-min_num] ^= true,
-                            _ => (),
-                        };}
-                };
+                do_if_mod_60_match_pat!(7 | 19 | 31 | 43, n_2 < max_num,
+                    prime_filter[n_2-min_num] ^= true);
                 n_2 += to_next_n_2;
                 to_next_n_2 += 6;
             };
@@ -126,13 +113,8 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 },
             };
             loop {
-                match n_3{
-                    n if n >= max_num => break,
-                    n => {match n%60{
-                            11 | 23 | 47 | 59 => prime_filter[n-min_num] ^= true,
-                            _ => (),
-                    };},
-                };
+                do_if_mod_60_match_pat!(11 | 23 | 47 | 59, n_3 < max_num,
+                    prime_filter[n_3-min_num] ^= true);
                 n_3 += to_next_n_3;
                 to_next_n_3 += 24;
             };
