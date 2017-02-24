@@ -13,15 +13,16 @@ fn int_sqrt(n:usize) -> usize{
     if n < (1 << 53) {
         (n as f64).sqrt() as usize
     }else{
-        let mut x = n;
-            loop{
-                x = match (x + n/x) >> 1 {
-                    new_x if new_x == x => break,
-                    new_x if new_x*new_x == n + 1 => {x = new_x - 1; break},
-                    new_x => new_x,
-                };
-            }
-        x
+        //We are trying to find n = (x+y)^2. Truncate the last third
+        //(down to an even number) of the bits of n. Take the square root of this
+        //and put half the bits removed back to make x. We can prove y^2 < x, so n%x = y^2.
+        //Take the square root of that to derive sqrt(n) = x + y
+        let third_log_2_n = match n.checked_next_power_of_two(){
+            Some(n_power_of_two) => n_power_of_two.trailing_zeros()+1,
+            None => (0 as usize).trailing_zeros()+1,
+        }/3;
+        let x = int_sqrt(n >> (third_log_2_n - (third_log_2_n%2))) << (third_log_2_n/2);
+        int_sqrt(n%x) + x
     }
 }
 
@@ -181,6 +182,8 @@ fn private_filter_test(){
     assert_eq!(1, int_sqrt(1));
     assert_eq!(10, int_sqrt(100));
     assert_eq!(3, int_sqrt(13));
+    assert_eq!(1_000_000_000, int_sqrt(10_00_000_000_000_000_000));
+    assert_eq!(1<<27, ceil_sqrt((1<<54) - 1));
 }
 
 #[cfg(test)]
