@@ -10,7 +10,7 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
 }
 
 fn int_sqrt(n:usize) -> usize{
-    if n < (1 << 50) {
+    if n < (1 << 52) {
         (n as f64).sqrt() as usize
     }else{
         let mut x = (n as f64).sqrt() as usize;
