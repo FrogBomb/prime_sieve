@@ -136,6 +136,7 @@ mod tests {
         let primes = primes_section(min, max);
         let end = PreciseTime::now();
         println!("{} seconds to find big prime section!", start.to(end));
+        println!("First prime = {}, Last prime = {}", primes[0], primes.last().unwrap());
         let total_primes = primes.len();
         assert_eq!(total_primes, 2714904);
     }
