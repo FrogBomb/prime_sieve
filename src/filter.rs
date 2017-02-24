@@ -25,6 +25,26 @@ fn int_sqrt(n:usize) -> usize{
     }
 }
 
+#[test]
+fn private_filter_test(){
+    assert_eq!(5, ceil_sqrt(24));
+    assert_eq!(2, int_sqrt(4));
+    assert_eq!(4, int_sqrt(24));
+    assert_eq!(10, int_sqrt(101));
+    assert_eq!(1, int_sqrt(1));
+    assert_eq!(10, int_sqrt(100));
+    assert_eq!(3, int_sqrt(13));
+    assert_eq!(1_000_000_000, int_sqrt(10_00_000_000_000_000_000));
+    assert_eq!(1<<27, ceil_sqrt((1<<54) - 1));
+    assert_eq!(100000000, ceil_sqrt(9999999999989999));
+    for i in (10000000000000000-100000000)..10000000000000000{
+        assert_eq!(100000000, ceil_sqrt(i));
+    }
+    for i in 10000000000000000..(10000000000000000+100000000){
+        assert_eq!(100000000, int_sqrt(i));
+    }
+}
+
 fn ceil_sqrt(n:usize) -> usize{
     if n == 0{
         return 0;
@@ -172,19 +192,7 @@ pub fn old_prime_filter(max_num: usize) -> Vec<bool>{
     slow_prime_filter(max_num)
 }
 
-#[test]
-fn private_filter_test(){
-    assert_eq!(5, ceil_sqrt(24));
-    assert_eq!(2, int_sqrt(4));
-    assert_eq!(4, int_sqrt(24));
-    assert_eq!(10, int_sqrt(101));
-    assert_eq!(1, int_sqrt(1));
-    assert_eq!(10, int_sqrt(100));
-    assert_eq!(3, int_sqrt(13));
-    assert_eq!(1_000_000_000, int_sqrt(10_00_000_000_000_000_000));
-    assert_eq!(1<<27, ceil_sqrt((1<<54) - 1));
-    assert_eq!(100000000, ceil_sqrt(9999999999989999))
-}
+
 
 #[cfg(test)]
 fn slow_prime_filter(max_num: usize) -> Vec<bool>{
