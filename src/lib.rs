@@ -124,7 +124,7 @@ mod tests {
         let primes = prime_filter(n);
         let end = PreciseTime::now();
         println!("{} seconds to generate a prime filter less than {}!", start.to(end), n);
-        println!("{} primes total!", primes.len());
+        // println!("{} primes total!", primes.len());
         let total_primes = primes.iter().fold(0, |acc, &x| acc + (if x {1} else {0}));
         assert_eq!(total_primes, 5761455);
     }
