@@ -36,6 +36,9 @@ fn private_filter_test(){
     assert_eq!(3, int_sqrt(13));
     assert_eq!(1_000_000_000, int_sqrt(10_00_000_000_000_000_000));
     assert_eq!(1<<27, ceil_sqrt((1<<54) - 1));
+    assert_eq!(94906265, int_sqrt((1<<53) + 1));
+    assert_eq!(1<<26, int_sqrt((1<<52) + 1 ));
+    assert_eq!(1<<25, int_sqrt((1<<50) + 1 ));
     assert_eq!(100000000, ceil_sqrt(9999999999989999));
     for i in (10000000000000000-100000000)..10000000000000000{
         assert_eq!(100000000, ceil_sqrt(i));
