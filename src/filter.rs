@@ -76,6 +76,9 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 },
             };
             loop{
+                //While n_1<max_num,
+                //When n_1 % 60 === 1, 13, 17, 29, 37, 41, 49, or 53, do
+                // prime_filter[n_1-min_num] ^= true
                 do_if_mod_60_match_pat!( 1 | 13 | 17 | 29 | 37 | 41 | 49 | 53, n_1 < max_num,
                     prime_filter[n_1-min_num] ^= true);
                 n_1 += to_next_n_1;
@@ -93,6 +96,9 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 },
             };
             loop {
+                //While n_2<max_num,
+                //When n_2 % 60 === 7, 19, 31, or 43, do
+                // prime_filter[n_2-min_num] ^= true
                 do_if_mod_60_match_pat!(7 | 19 | 31 | 43, n_2 < max_num,
                     prime_filter[n_2-min_num] ^= true);
                 n_2 += to_next_n_2;
@@ -113,6 +119,9 @@ pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<b
                 },
             };
             loop {
+                //While n_3<max_num,
+                //When n_3 % 60 === 11, 23, 47, or 59, do
+                // prime_filter[n_3-min_num] ^= true
                 do_if_mod_60_match_pat!(11 | 23 | 47 | 59, n_3 < max_num,
                     prime_filter[n_3-min_num] ^= true);
                 n_3 += to_next_n_3;
