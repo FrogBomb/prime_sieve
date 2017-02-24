@@ -63,6 +63,7 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
             Ok(mes) => mes,
             Err(e) => panic!(e.to_string()),
         };
+        println!("Primes in sec {}: {}", start_seg_end + seg_size*(i) , p_sec.len());
         res_vec[i] = p_sec;
     }
     res_vec.concat()
