@@ -1,10 +1,10 @@
 
-# concurrent_prime_sieve (v 0.3.0) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
+# concurrent_prime_sieve (v 0.3.2) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
 Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
 
-This implementation runs in O( sqrt(max_num) + section_size )
+This implementation runs in O( sqrt(max_num) + section_size ) with O( section_size ) memory.
 (where section_size = max_num - min_num)
 
 This implementation built to work well with parallel processing, distributed computing tasks, or if a reasonably large section of primes is desired within a range that is roughly quadratic to the size of the section. (e.g., If you need primes in a block of size 10^9 starting at roughtly 10^18.) By integrating Huon Wilson's primal package (see below), this package also is able to more quickly calculate all primes below a desired threshold through concurrency.

@@ -10,19 +10,41 @@ pub fn prime_filter_section_concurrently(min_num:usize, max_num: usize, threads:
 }
 
 fn int_sqrt(n:usize) -> usize{
-    if n < (1 << 53) {
+    if n < (1 << 52) {
         (n as f64).sqrt() as usize
     }else{
-        //We are trying to find n = (x+y)^2. Truncate the last third
-        //(down to an even number) of the bits of n. Take the square root of this
-        //and put half the bits removed back to make x. We can prove y^2 < x, so n%x = y^2.
-        //Take the square root of that to derive sqrt(n) = x + y
-        let third_log_2_n = match n.checked_next_power_of_two(){
-            Some(n_power_of_two) => n_power_of_two.trailing_zeros()+1,
-            None => (0 as usize).trailing_zeros()+1,
-        }/3;
-        let x = int_sqrt(n >> (third_log_2_n - (third_log_2_n%2))) << (third_log_2_n/2);
-        int_sqrt(n%x) + x
+        let mut x = (n as f64).sqrt() as usize;
+        loop{
+                x = match (x + n/x) >> 1 {
+                    new_x if new_x == x => break,
+                    new_x if new_x*new_x == n + 1 => {x = new_x - 1; break},
+                    new_x => new_x,
+                };
+            }
+        x
+    }
+}
+
+#[test]
+fn private_filter_test(){
+    assert_eq!(5, ceil_sqrt(24));
+    assert_eq!(2, int_sqrt(4));
+    assert_eq!(4, int_sqrt(24));
+    assert_eq!(10, int_sqrt(101));
+    assert_eq!(1, int_sqrt(1));
+    assert_eq!(10, int_sqrt(100));
+    assert_eq!(3, int_sqrt(13));
+    assert_eq!(1_000_000_000, int_sqrt(10_00_000_000_000_000_000));
+    assert_eq!(1<<27, ceil_sqrt((1<<54) - 1));
+    assert_eq!(94906265, int_sqrt((1<<53) + 1));
+    assert_eq!(1<<26, int_sqrt((1<<52) + 1 ));
+    assert_eq!(1<<25, int_sqrt((1<<50) + 1 ));
+    assert_eq!(100000000, ceil_sqrt(9999999999989999));
+    for i in (10000000000000000-100000000)..10000000000000000{
+        assert_eq!(100000000, ceil_sqrt(i));
+    }
+    for i in 10000000000000000..(10000000000000000+100000000){
+        assert_eq!(100000000, int_sqrt(i));
     }
 }
 
@@ -173,18 +195,7 @@ pub fn old_prime_filter(max_num: usize) -> Vec<bool>{
     slow_prime_filter(max_num)
 }
 
-#[test]
-fn private_filter_test(){
-    assert_eq!(5, ceil_sqrt(24));
-    assert_eq!(2, int_sqrt(4));
-    assert_eq!(4, int_sqrt(24));
-    assert_eq!(10, int_sqrt(101));
-    assert_eq!(1, int_sqrt(1));
-    assert_eq!(10, int_sqrt(100));
-    assert_eq!(3, int_sqrt(13));
-    assert_eq!(1_000_000_000, int_sqrt(10_00_000_000_000_000_000));
-    assert_eq!(1<<27, ceil_sqrt((1<<54) - 1));
-}
+
 
 #[cfg(test)]
 fn slow_prime_filter(max_num: usize) -> Vec<bool>{

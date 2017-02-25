@@ -128,4 +128,16 @@ mod tests {
         let total_primes = primes.iter().fold(0, |acc, &x| acc + (if x {1} else {0}));
         assert_eq!(total_primes, 5761455);
     }
+    #[test]
+    fn big_distant_section(){
+        let min = 10000000000000000;
+        let max = 10000000100000000;
+        let start = PreciseTime::now();
+        let primes = primes_section(min, max);
+        let end = PreciseTime::now();
+        println!("{} seconds to find big prime section!", start.to(end));
+        println!("First prime = {}, Last prime = {}", primes[0], primes.last().unwrap());
+        let total_primes = primes.len();
+        assert_eq!(total_primes, 2714904);
+    }
 }
