@@ -59,7 +59,7 @@ pub fn to_concurrent_on_section<T, SeqF>(seq_fun: SeqF,
     }
 
     for _ in 0..threads{
-        let (i, p_sec) = match rx.recv().unwrap();
+        let (i, p_sec) = rx.recv().unwrap();
         res_vec[i] = p_sec;
     }
     res_vec.concat()
