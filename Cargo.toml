@@ -4,19 +4,18 @@ version = "0.3.2"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 keywords = ["primes", "concurrent", "fast", "generator", "math"]
 
-description = "Tools for generating filters and collections with primes concurrently. Rust implementation of the Sieve of Atkin. This implementation runs in O( sqrt(max_num) + section_size ) (where section_size = max_num - min_num). Powered with primal for increased speed in some cases."
+description = "Tools for generating filters and collections with primes concurrently. Rust implementation of the Sieve of Atkin. This implementation runs in O( sqrt(max_num) + section_size ) (where section_size = max_num - min_num). Integrated with primal for increased speed in some cases."
 
 repository = "https://github.com/FrogBomb/prime_sieve"
 
 readme = "README.md"
 
-categories = ["algorithms", "concurrency", "science"]
+categories = ["algorithms", "concurrency"]
 
 license = "MIT"
 
 [badges]
-# Travis CI: `repository` is required. `branch` is optional; default is `master`
-travis-ci = { repository = "https://travis-ci.org/FrogBomb/prime_sieve", branch = "master" }
+travis-ci = { repository = "FrogBomb/prime_sieve" }
 
 [dependencies]
 num_cpus = "^1.2.1"
