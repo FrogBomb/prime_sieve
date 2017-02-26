@@ -1,6 +1,6 @@
 [package]
 name = "concurrent_prime_sieve"
-version = "0.3.2"
+version = "0.3.3"
 authors = ["FrogBomb <TLBlanchet@gmail.com>"]
 keywords = ["primes", "concurrent", "fast", "generator", "math"]
 
