@@ -1,5 +1,5 @@
 
-# concurrent_prime_sieve (v 0.3.2) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
+# concurrent_prime_sieve [![Crate](https://img.shields.io/crates/v/concurrent_prime_sieve.svg)](https://crates.io/crates/concurrent_prime_sieve) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
 Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
@@ -7,7 +7,7 @@ Rust implementation of the Sieve of Atkin.
 This implementation runs in O( sqrt(max_num) + section_size ) with O( section_size ) memory.
 (where section_size = max_num - min_num)
 
-This implementation built to work well with parallel processing, distributed computing tasks, or if a reasonably large section of primes is desired within a range that is roughly quadratic to the size of the section. (e.g., If you need primes in a block of size 10^9 starting at roughtly 10^18.) By integrating Huon Wilson's primal package (see below), this package also is able to more quickly calculate all primes below a desired threshold through concurrency.
+This implementation built to work well with parallel processing, distributed computing tasks, or if a reasonably large section of primes is desired within a range that is roughly quadratic to the size of the section. (e.g., If you need primes in a block of size 10^9 starting at roughly 10^18.) By integrating Huon Wilson's primal package (see below), this package also is able to more quickly calculate all primes below a desired threshold through concurrency.
 
 With this algorithm, there is no need to calculate smaller primes or to have any communication between threads, as each section of primes is calculated completely independently. Therefore, it is efficient for and very easily implemented in a distributed system.
 
@@ -46,6 +46,7 @@ fn prime_filter_section_concurrently(min_num: usize, max_num: usize, threads: us
 fn prime_filter_section_sequentially(min_num: usize, max_num: usize) -> Vec<bool>
 ```
 >Similar to `fn prime_filter_section`, but does not spawn any new threads.
+>_(Note: for min_num <= 210, this is just the vector cast of primal_sieve::Sieve.)
 
 ## `concurrent_prime_sieve::collection`
 ```Rust
@@ -82,3 +83,4 @@ fn primes_section_concurrently(min_num:usize, max_num:usize, threads:usize) -> V
 fn primes_section_sequentially(min_num:usize, max_num:usize, threads:usize) -> Vec<usize>
 ```
 >Similar to `fn primes_section`, but does not spawn any new threads.
+> _(Note: For min_num <= 210, this is just a vector cast of the primal_sieve::SievePrimes.)_
