@@ -1,5 +1,5 @@
 
-# concurrent_prime_sieve [![Crate](https://img.shields.io/crates/v/concurrent_prime_sieve.svg)](https://crates.io/crates/concurrent_prime_sieve) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve) 
+# concurrent_prime_sieve [![Crate](https://img.shields.io/crates/v/concurrent_prime_sieve.svg)](https://crates.io/crates/concurrent_prime_sieve) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
 Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
@@ -46,6 +46,7 @@ fn prime_filter_section_concurrently(min_num: usize, max_num: usize, threads: us
 fn prime_filter_section_sequentially(min_num: usize, max_num: usize) -> Vec<bool>
 ```
 >Similar to `fn prime_filter_section`, but does not spawn any new threads.
+>_(Note: for min_num <= 210, this is just the vector cast of primal_sieve::Sieve.)
 
 ## `concurrent_prime_sieve::collection`
 ```Rust

@@ -64,21 +64,30 @@ pub fn prime_filter(max_num: usize) -> Vec<bool>{
 pub fn prime_filter_section(min_num:usize, max_num: usize) -> Vec<bool>{
     prime_filter_section_concurrently(min_num, max_num, num_cpus::get())
 }
-
-pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
+fn primal_sieve_to_vec(min_num:usize, max_num:usize) -> Vec<bool>{
     let ps = primal_sieve::Sieve::new(max_num);
-    (0..max_num).map(|i| ps.is_prime(i)).collect()
+    (min_num..max_num).map(|i| ps.is_prime(i)).collect()
+}
+pub fn prime_filter_sequentially(max_num: usize) -> Vec<bool>{
+    primal_sieve_to_vec(0, max_num)
 }
 
 pub fn prime_filter_section_sequentially(min_num:usize, max_num: usize) -> Vec<bool>{
-    //Sieve of Atkin
-    if min_num == 0{
-        return prime_filter_sequentially(max_num);
-    }
+
     assert!(min_num<max_num);
+
+    if min_num <= 210{
+        return primal_sieve_to_vec(min_num, max_num);
+    }
+    
+    sieve_of_atkin(min_num, max_num)
+}
+
+fn sieve_of_atkin(min_num:usize, max_num: usize) -> Vec<bool>{
+    //Sieve of Atkin
     let mut prime_filter = vec![false; max_num-min_num];
 
-    set_true_if_in_range!(2, 3, 5 => prime_filter + min_num, min_num, max_num);
+    // set_true_if_in_range!(2, 3, 5 => prime_filter + min_num, min_num, max_num);
     //Macro equivilent:
     // if (min_num <= 2) & (max_num > 2) {prime_filter[2-min_num] = true;}
     // if (min_num <= 3) & (max_num > 3) {prime_filter[3-min_num] = true;}
