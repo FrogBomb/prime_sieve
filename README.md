@@ -1,5 +1,5 @@
 
-# concurrent_prime_sieve (v 0.3.2) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve)
+# concurrent_prime_sieve [![Crate](https://img.shields.io/crates/v/concurrent_prime_sieve.svg)](https://crates.io/crates/concurrent_prime_sieve) [![Build Status](https://travis-ci.org/FrogBomb/prime_sieve.svg?branch=master)](https://travis-ci.org/FrogBomb/prime_sieve) 
 Tools for generating filters and collections with primes concurrently.
 
 Rust implementation of the Sieve of Atkin.
