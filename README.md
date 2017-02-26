@@ -83,3 +83,4 @@ fn primes_section_concurrently(min_num:usize, max_num:usize, threads:usize) -> V
 fn primes_section_sequentially(min_num:usize, max_num:usize, threads:usize) -> Vec<usize>
 ```
 >Similar to `fn primes_section`, but does not spawn any new threads.
+> _(Note: For min_num <= 210, this is just a vector cast of the primal_sieve::SievePrimes.)_
